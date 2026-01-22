@@ -1,0 +1,18 @@
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* Light Mode */
+.fi-sidebar {
+  background-color: #ffffff !important;
+  border-right: 1px solid #e2e8f0 !important;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Dark Mode */
+.dark .fi-sidebar {
+    background-color: oklch(0.21 0.006 285.885) !important;
+    border-right: 1px solid oklch(0.28 0.012 285.885) !important; /* Sedikit lebih terang dari bg */
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3) !important; /* Shadow lebih gelap untuk dark mode */
+}

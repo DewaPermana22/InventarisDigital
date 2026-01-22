@@ -1,0 +1,124 @@
+<?php
+
+namespace App\Filament\Resources\Users\Tables;
+
+use App\Enums\HakAkses;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ViewAction;
+use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use App\Service\KartuAnggotaService;
+use Filament\Notifications\Notification;
+
+class UsersTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                ImageColumn::make('profile_pict')
+                    ->circular()
+                    ->label('Foto')
+                    ->disk('public')
+                    ->getStateUsing(function ($record) {
+                        return $record->profile_pict ?? 'storage/profile_pict/default_pp.jpg';
+                    })
+                    ->defaultImageUrl(asset('storage/profile_pict/default_pp.jpg')),
+
+                TextColumn::make('name')
+                    ->searchable()
+                    ->label('Nama')
+                    ->copyable()
+                    ->copyMessage('Nama pengguna disalin!')
+                    ->weight('bold')
+                    ->sortable(),
+
+                TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->copyable()
+                    ->copyMessage('Email pengguna disalin!')
+                    ->weight('bold')
+                    ->sortable(),
+
+                TextColumn::make('role')
+                    ->label('Hak Akses')
+                    ->badge()
+                    ->sortable()
+                    ->color(fn(HakAkses $state): string => match ($state) {
+                        HakAkses::SUPERADMIN => 'success',
+                        HakAkses::ADMIN => 'warning',
+                        HakAkses::USER => 'danger',
+                    })
+                    ->formatStateUsing(fn(HakAkses $state): string => $state->label()),
+
+                IconColumn::make('is_active')
+                    ->label('Status')
+                    ->boolean()
+                    ->sortable()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger'),
+            ])
+            ->filters([
+                SelectFilter::make('role')
+                    ->label('Hak Akses')
+                    ->options(HakAkses::class),
+
+                SelectFilter::make('is_active')
+                    ->label('Status')
+                    ->options([
+                        '1' => 'Aktif',
+                        '0' => 'Tidak Aktif',
+                    ]),
+            ])
+            ->recordActions([
+                ActionGroup::make([
+                    EditAction::make()->color('warning'),
+                    ViewAction::make()->color(Color::Indigo),
+                ])
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    BulkAction::make('cetakKartu')
+                        ->label('Cetak Kartu')
+                        ->icon('heroicon-o-printer')
+                        ->color(Color::Green)
+                        ->action(function ($records) {
+                            if ($records->count() > 4) {
+                                Notification::make()
+                                    ->title('Batas Maksimal Terlampaui')
+                                    ->body('Maksimal hanya 4 kartu yang dapat dicetak dalam satu aksi.')
+                                    ->danger()
+                                    ->send();
+
+                                return;
+                            }
+                            $ids = $records->pluck('id')->implode(',');
+
+                            return redirect()->route('kartu.download', [
+                                'ids' => explode(',', $ids),
+                            ]);
+                        })
+                        ->requiresConfirmation(),
+                ]),
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->striped();
+    }
+}
