@@ -41,24 +41,19 @@ class BarangTersediaResource extends Resource
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Cube;
 
     protected static ?string $recordTitleAttribute = 'name';
-
+    protected static ?string $label = "Barang Tersedia";
     public static function form(Schema $schema): Schema
     {
         return BarangTersediaForm::configure($schema);
     }
 
-    public static function infolist(Schema $schema): Schema
-    {
-        return BarangTersediaInfolist::configure($schema);
-    }
-
-    //Filter barang
+    //Filter barang yang sedang tersedia
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
             ->where('kondisi', KondisiBarang::BAIK)
             ->whereDoesntHave('peminjaman', function (Builder $query) {
-                $query->where('status', '!=', StatusPeminjaman::DIKEMBALIKAN);
+                $query->whereNotIn('status', StatusPeminjaman::inactive());
             });
     }
     public static function table(Table $table): Table
@@ -77,9 +72,6 @@ class BarangTersediaResource extends Resource
     {
         return [
             'index' => ListBarangTersedias::route('/'),
-            'create' => CreateBarangTersedia::route('/create'),
-            'view' => ViewBarangTersedia::route('/{record}'),
-            'edit' => EditBarangTersedia::route('/{record}/edit'),
         ];
     }
 

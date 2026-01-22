@@ -21,6 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use App\Service\KartuAnggotaService;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class UsersTable
 {
@@ -41,6 +42,8 @@ class UsersTable
                     ->searchable()
                     ->label('Nama')
                     ->copyable()
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
                     ->copyMessage('Nama pengguna disalin!')
                     ->weight('bold')
                     ->sortable(),
@@ -49,6 +52,8 @@ class UsersTable
                     ->label('Email')
                     ->searchable()
                     ->copyable()
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
                     ->copyMessage('Email pengguna disalin!')
                     ->weight('bold')
                     ->sortable(),

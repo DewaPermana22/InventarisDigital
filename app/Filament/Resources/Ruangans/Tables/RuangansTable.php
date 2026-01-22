@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class RuangansTable
 {
@@ -16,6 +17,9 @@ class RuangansTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Tanggal Ditambahkan')

@@ -6,6 +6,7 @@ use App\Enums\HakAkses;
 use App\Filament\Resources\PeminjamanBarangs\Pages\CreatePeminjamanBarang;
 use App\Filament\Resources\PeminjamanBarangs\Pages\EditPeminjamanBarang;
 use App\Filament\Resources\PeminjamanBarangs\Pages\ListPeminjamanBarangs;
+use App\Filament\Resources\PeminjamanBarangs\Pages\ViewPeminjamanBarang;
 use App\Filament\Resources\PeminjamanBarangs\Schemas\PeminjamanBarangForm;
 use App\Filament\Resources\PeminjamanBarangs\Tables\PeminjamanBarangsTable;
 use App\Models\PeminjamanBarang;
@@ -36,7 +37,7 @@ class PeminjamanBarangResource extends Resource
         return Auth::user()?->role == HakAkses::USER;
     }
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = 'id';
 
     public static function form(Schema $schema): Schema
     {
@@ -55,12 +56,18 @@ class PeminjamanBarangResource extends Resource
         ];
     }
 
+    public static function getRecordUrl($record): ?string
+    {
+        return static::getUrl('view', ['record' => $record]);
+    }
+
+
     public static function getPages(): array
     {
         return [
             'index' => ListPeminjamanBarangs::route('/'),
             'create' => CreatePeminjamanBarang::route('/create'),
-            'edit' => EditPeminjamanBarang::route('/{record}/edit'),
+            'view' => ViewPeminjamanBarang::route('/{record}'),
         ];
     }
 

@@ -23,6 +23,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class BarangsTable
 {
@@ -41,18 +42,22 @@ class BarangsTable
                     ->label('Foto')
                     ->square()
                     ->defaultImageUrl(url('/images/placeholder.png')),
-                    
+
                 TextColumn::make('kode_barang')
                     ->label('Kode Barang')
                     ->searchable()
                     ->sortable()
                     ->copyable()
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
                     ->copyMessage('Kode barang disalin!')
                     ->weight('bold'),
 
                 TextColumn::make('name')
                     ->label('Nama Barang')
                     ->searchable()
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
                     ->sortable(),
 
                 TextColumn::make('category.name')

@@ -46,6 +46,7 @@ class DashboardPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Indigo,
             ])
+            ->databaseNotifications()
             ->font('Nunito')
             ->authGuard('web')
             ->sidebarCollapsibleOnDesktop(true)

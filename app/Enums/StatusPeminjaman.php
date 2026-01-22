@@ -5,6 +5,8 @@ namespace App\Enums;
 enum StatusPeminjaman: string
 {
     case BELUM_DISETUJUI = 'menunggu_persetujuan';
+    case DIBATALKAN = 'dibatalkan';
+    case DITOLAK = 'ditolak';
     case DIPINJAM = 'dipinjam';
     case DIKEMBALIKAN = 'dikembalikan';
     case TERLAMBAT = 'terlambat';
@@ -14,6 +16,8 @@ enum StatusPeminjaman: string
         return match ($this) {
             self::BELUM_DISETUJUI => 'Menunggu',
             self::DIPINJAM => 'Dipinjam',
+            self::DITOLAK => 'Ditolak',
+            self::DIBATALKAN => 'Dibatalkan',
             self::DIKEMBALIKAN => 'Dikembalikan',
             self::TERLAMBAT => 'Terlambat',
         };
@@ -26,6 +30,18 @@ enum StatusPeminjaman: string
             self::DIPINJAM => 'primary',
             self::DIKEMBALIKAN => 'success',
             self::TERLAMBAT => 'danger',
+            self::DIBATALKAN => 'danger',
+            self::DITOLAK => 'danger',
         };
+    }
+
+    // Untuk filtering barang tersedia
+    public static function inactive(): array
+    {
+        return [
+            self::DIKEMBALIKAN,
+            self::DIBATALKAN,
+            self::DITOLAK,
+        ];
     }
 }

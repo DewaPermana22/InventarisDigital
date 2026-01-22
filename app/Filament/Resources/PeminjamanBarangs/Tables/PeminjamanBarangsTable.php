@@ -11,12 +11,14 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class PeminjamanBarangsTable
 {
@@ -42,12 +44,16 @@ class PeminjamanBarangsTable
                     ->copyable()
                     ->copyMessage('Kode barang disalin!')
                     ->sortable()
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
                     ->weight('bold'),
 
                 TextColumn::make('barang.name')
                     ->label('Nama Barang')
                     ->searchable()
                     ->sortable()
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
                     ->weight('bold'),
 
                 TextColumn::make('created_at')
@@ -68,30 +74,38 @@ class PeminjamanBarangsTable
             ])
 
             ->recordActions([
-
-                /* =========================
-                 * BATALKAN (BELUM DISETUJUI)
-                 * ========================= */
-                DeleteAction::make('batalkan')
+                // Batalkan (Belum Di setujui)
+                Action::make('batalkan')
                     ->label('Batalkan')
                     ->color(Color::Red)
+                    ->icon(Heroicon::XCircle)
                     ->visible(
                         fn($record) =>
                         $record->status === StatusPeminjaman::BELUM_DISETUJUI
-                    ),
+                    )
+                    ->button()
+                    ->requiresConfirmation()
+                    ->modalHeading('Batalkan Pengajuan?')
+                    ->modalDescription("Anda yakin ingin membatalkan pengajuan?")
+                    ->modalIcon(Heroicon::OutlinedXCircle)
+                    ->modalSubmitActionLabel('Ya, Batalkan')
+                    ->action(function ($record) {
+                        $record->update([
+                            'status' => StatusPeminjaman::DIBATALKAN,
+                        ]);
+                    }),
 
-                /* =========================
-                 * KEMBALIKAN (DIPINJAM)
-                 * ========================= */
+                // Kembalikan (Sudah Dipinjam)
                 Action::make('scan_barcode')
                     ->label('Kembalikan')
-                    ->icon('heroicon-o-camera')
+                    ->icon(Heroicon::Camera)
                     ->color(Color::Indigo)
+                    ->button()
                     ->visible(fn($record) => $record->status === StatusPeminjaman::DIPINJAM)
 
                     // ===== MODAL =====
                     ->modalHeading('Scan Barcode Barang')
-                    ->mountUsing(fn ($livewire) => $livewire->barcode = null)
+                    ->mountUsing(fn($livewire) => $livewire->barcode = null)
                     ->modalContent(view('scanner.barcode'))
                     ->modalWidth('2xl')
                     ->closeModalByClickingAway(false)
@@ -149,7 +163,9 @@ class PeminjamanBarangsTable
                  * ========================= */
                 Action::make('kembalikan_terlambat')
                     ->label('Kembalikan')
+                    ->button()
                     ->color(Color::Red)
+                    ->icon(Heroicon::Clock)
                     ->visible(
                         fn($record) =>
                         $record->status === StatusPeminjaman::TERLAMBAT

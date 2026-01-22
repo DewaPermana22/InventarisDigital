@@ -12,12 +12,17 @@ class PeminjamanBarang extends Model
 
     protected $fillable = [
         'peminjam_id',
+        'petugas_id',
         'barang_id',
+        'keperluan',
         'tanggal_disetujui',
         'tanggal_pinjam',
         'tanggal_kembali',
         'jumlah',
         'status',
+        'created_by',
+        'deleted_by',
+        'updated_by',
     ];
 
     // Untuk memastikan data yang kita input dari aplikasi sesuai dengan tipe data di database

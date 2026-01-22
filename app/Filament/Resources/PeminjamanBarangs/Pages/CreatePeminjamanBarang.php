@@ -17,6 +17,7 @@ class CreatePeminjamanBarang extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['peminjam_id'] = Auth::user()->id;
+        $data['created_by'] = Auth::user()->id;
         return $data;
     }
 

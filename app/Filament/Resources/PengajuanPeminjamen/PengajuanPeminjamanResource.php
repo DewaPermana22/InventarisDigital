@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\PengajuanPeminjamen;
 
+use App\Enums\HakAkses;
+use App\Enums\StatusPeminjaman;
 use App\Filament\Resources\PengajuanPeminjamen\Pages\CreatePengajuanPeminjaman;
 use App\Filament\Resources\PengajuanPeminjamen\Pages\EditPengajuanPeminjaman;
 use App\Filament\Resources\PengajuanPeminjamen\Pages\ListPengajuanPeminjamen;
@@ -19,13 +21,29 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class PengajuanPeminjamanResource extends Resource
 {
     protected static ?string $model = PeminjamanBarang::class;
+     public static function canViewAny(): bool
+    {
+        return Auth::user()?->role == HakAkses::ADMIN;
+    }
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->role == HakAkses::ADMIN;
+    }
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ClipboardDocumentCheck;
+    protected static string|UnitEnum|null $navigationGroup = "Aktivitas";
+    protected static ?string $navigationLabel = "Pengajuan Peminjaman";
+    public static function getBreadcrumb(): string
+    {
+        return "Pengajuan Peminjaman";
+    }
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
@@ -58,6 +76,15 @@ class PengajuanPeminjamanResource extends Resource
             'view' => ViewPengajuanPeminjaman::route('/{record}'),
             'edit' => EditPengajuanPeminjaman::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('status', StatusPeminjaman::BELUM_DISETUJUI)
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

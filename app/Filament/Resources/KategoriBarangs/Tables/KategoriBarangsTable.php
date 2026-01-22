@@ -10,6 +10,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class KategoriBarangsTable
 {
@@ -22,6 +23,8 @@ class KategoriBarangsTable
                     ->sortable(),
                 TextColumn::make('name')
                     ->label('Nama Kategori')
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('prefix')

@@ -11,7 +11,10 @@ class KategoriBarang extends Model
 
     protected $fillable = [
         'name',
-        'prefix'
+        'prefix',
+        'created_by',
+        'deleted_by',
+        'updated_by',
     ];
 
     public function barangs()

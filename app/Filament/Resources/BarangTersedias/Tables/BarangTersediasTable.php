@@ -14,6 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class BarangTersediasTable
 {
@@ -21,6 +22,7 @@ class BarangTersediasTable
     {
         return $table
             ->columnManager(false)
+            ->recordUrl(null)
             ->emptyStateHeading('Barang tidak tersedia')
             ->emptyStateDescription('Saat ini seluruh barang sedang dipinjam')
             ->columns([
@@ -39,12 +41,16 @@ class BarangTersediasTable
                     ->searchable()
                     ->sortable()
                     ->copyable()
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
                     ->copyMessage('Kode barang disalin!')
                     ->weight('bold'),
 
                 TextColumn::make('name')
                     ->label('Nama Barang')
                     ->searchable()
+                    ->formatStateUsing(fn($state) => Str::limit($state, 20))
+                    ->tooltip(fn($state) => $state)
                     ->sortable(),
 
                 TextColumn::make('category.name')
