@@ -4,9 +4,9 @@ namespace App\Filament\Resources\PeminjamanBarangs\Tables;
 
 use App\Enums\StatusPeminjaman;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
@@ -25,7 +25,7 @@ class PeminjamanBarangsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->emptyStateHeading('Belum ada ajuan peminjaman barang')
+            ->emptyStateHeading('Belum ada peminjaman barang')
             ->emptyStateDescription('Silahkan ajukan peminjaman barang yang tersedia')
 
             ->columns([
@@ -77,7 +77,7 @@ class PeminjamanBarangsTable
                 // Batalkan (Belum Di setujui)
                 Action::make('batalkan')
                     ->label('Batalkan')
-                    ->color(Color::Red)
+                    ->color('danger')
                     ->icon(Heroicon::XCircle)
                     ->visible(
                         fn($record) =>
@@ -92,22 +92,44 @@ class PeminjamanBarangsTable
                     ->action(function ($record) {
                         $record->update([
                             'status' => StatusPeminjaman::DIBATALKAN,
+                            'updated_at' => now()
                         ]);
                     }),
+
+                // Kembalikan Barang
+                // Action::make('kembalikan')
+                // ->label('Kembalikan')
+                // ->color('success')
+                // ->icon(Heroicon::Pencil)
+                // ->visible(
+                //     fn($record) =>
+                //     $record->status === StatusPeminjaman::DIPINJAM
+                // )
+                // ->button()
+                // ->requiresConfirmation()
+                // ->modalHeading('Kembalikan Barang?')
+                // ->modalDescription("Anda yakin ingin mengembalikan barang yang anda pinjam?")
+                // ->modalIcon(Heroicon::OutlinedCheckBadge)
+                // ->modalSubmitActionLabel('Ya, Kembalikan')
+                // ->action(function ($record) {
+                //     $record->update([
+                //         'status' => StatusPeminjaman::DIKEMBALIKAN,
+                //         'updated_at' => now()
+                //     ]);
+                // }),
 
                 // Kembalikan (Sudah Dipinjam)
                 Action::make('scan_barcode')
                     ->label('Kembalikan')
                     ->icon(Heroicon::Camera)
-                    ->color(Color::Indigo)
+                    ->color('success')
                     ->button()
+                    ->requiresConfirmation()
                     ->visible(fn($record) => $record->status === StatusPeminjaman::DIPINJAM)
-
-                    // ===== MODAL =====
                     ->modalHeading('Scan Barcode Barang')
+                    ->modalDescription('Arahkan kamera ke barcode barang')
                     ->mountUsing(fn($livewire) => $livewire->barcode = null)
                     ->modalContent(view('scanner.barcode'))
-                    ->modalWidth('2xl')
                     ->closeModalByClickingAway(false)
 
                     // Reset state setiap modal dibuka
@@ -115,45 +137,42 @@ class PeminjamanBarangsTable
                         $livewire->barcode = null;
                     })
 
-                    // ===== ACTION =====
                     ->action(function ($record, $livewire) {
-
                         $barcode = $livewire->barcode;
-
-                        // 1️⃣ Belum scan
                         if (blank($barcode)) {
                             Notification::make()
                                 ->title('Barcode belum di-scan')
                                 ->warning()
                                 ->send();
-
                             return;
                         }
 
-                        // 2️⃣ Barcode tidak cocok
                         if ($barcode !== $record->barang->kode_barang) {
                             Notification::make()
                                 ->title('Barcode tidak sesuai')
                                 ->body("Barcode terbaca: {$barcode}")
                                 ->danger()
                                 ->send();
-
                             return;
                         }
 
-                        // 3️⃣ Update status peminjaman
                         $record->update([
                             'status' => StatusPeminjaman::DIKEMBALIKAN,
                             'tanggal_dikembalikan' => now(),
                         ]);
 
-                        // 4️⃣ Feedback sukses
+                        Notification::make()
+                            ->title('Barang berhasil dikembalikan')
+                            ->body('Silakan cek detail peminjaman')
+                            ->success()
+                            ->sendToDatabase(Auth::user());
+
+                        // Toast (popup)
                         Notification::make()
                             ->title('Barang berhasil dikembalikan')
                             ->success()
                             ->send();
 
-                        // 5️⃣ Tutup modal
                         $livewire->dispatch('close-modal');
                     }),
 
@@ -164,6 +183,7 @@ class PeminjamanBarangsTable
                 Action::make('kembalikan_terlambat')
                     ->label('Kembalikan')
                     ->button()
+                    ->requiresConfirmation()
                     ->color(Color::Red)
                     ->icon(Heroicon::Clock)
                     ->visible(

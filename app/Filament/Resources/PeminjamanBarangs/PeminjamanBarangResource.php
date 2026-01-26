@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PeminjamanBarangs;
 
 use App\Enums\HakAkses;
+use App\Enums\StatusPeminjaman;
 use App\Filament\Resources\PeminjamanBarangs\Pages\CreatePeminjamanBarang;
 use App\Filament\Resources\PeminjamanBarangs\Pages\EditPeminjamanBarang;
 use App\Filament\Resources\PeminjamanBarangs\Pages\ListPeminjamanBarangs;
@@ -60,7 +61,11 @@ class PeminjamanBarangResource extends Resource
     {
         return static::getUrl('view', ['record' => $record]);
     }
-
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereIn('status', StatusPeminjaman::active());
+    }
 
     public static function getPages(): array
     {

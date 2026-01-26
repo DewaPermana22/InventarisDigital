@@ -43,6 +43,8 @@ class RiwayatDendaResource extends Resource
     protected static ?int $navigationSort = 2;
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?string $label = "Riwayat Denda";
+    
     public static function form(Schema $schema): Schema
     {
         return RiwayatDendaForm::configure($schema);

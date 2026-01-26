@@ -9,11 +9,5 @@ use Filament\Resources\Pages\ListRecords;
 class ListRiwayatDendas extends ListRecords
 {
     protected static string $resource = RiwayatDendaResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
+    protected ?string $subheading = "Riwayat denda Anda selama melakukan peminjaman barang.";
 }

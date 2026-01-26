@@ -27,7 +27,8 @@ class RiwayatPeminjamanResource extends Resource
     protected static ?string $model = PeminjamanBarang::class;
 
     protected static string|UnitEnum|null $navigationGroup = "Riwayat";
-    protected static ?string $navigationLabel = "Riwayat Peminjaman";
+    protected static ?string $label = "Riwayat Peminjaman";
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
     protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Clock;
     protected static ?int $navigationSort = 1;
@@ -41,10 +42,6 @@ class RiwayatPeminjamanResource extends Resource
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()?->role == HakAkses::USER;
-    }
-    public static function form(Schema $schema): Schema
-    {
-        return RiwayatPeminjamanForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
@@ -68,9 +65,7 @@ class RiwayatPeminjamanResource extends Resource
     {
         return [
             'index' => ListRiwayatPeminjamen::route('/'),
-            'create' => CreateRiwayatPeminjaman::route('/create'),
             'view' => ViewRiwayatPeminjaman::route('/{record}'),
-            'edit' => EditRiwayatPeminjaman::route('/{record}/edit'),
         ];
     }
 

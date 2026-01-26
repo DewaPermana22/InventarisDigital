@@ -18,7 +18,6 @@ class PeminjamanBarang extends Model
         'tanggal_disetujui',
         'tanggal_pinjam',
         'tanggal_kembali',
-        'jumlah',
         'status',
         'created_by',
         'deleted_by',

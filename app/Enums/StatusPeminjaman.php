@@ -44,4 +44,13 @@ enum StatusPeminjaman: string
             self::DITOLAK,
         ];
     }
+
+    // Untuk Filtering peminjaman yang aktif
+    public static function active(){
+        return [
+            self::BELUM_DISETUJUI,
+            self::DIPINJAM,
+            self::TERLAMBAT,
+        ];
+    }
 }

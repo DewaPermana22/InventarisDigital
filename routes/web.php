@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Excel\ExportDataPeminjaman;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\Pdf\GenerateBarcodeBarang;
@@ -19,4 +20,9 @@ Route::prefix('barcode')->name('barcode.')->group(function () {
     Route::get('/download', [GenerateBarcodeBarang::class, 'download'])->name('download');
     // Download single barcode sebagai PNG
     Route::get('/download-image/{kodeBarang}', [GenerateBarcodeBarang::class, 'downloadImage'])->name('download-image');
+});
+
+Route::prefix('export')->name('export.')->group(function (){
+    Route::get('/riwayat-peminjaman', [ExportDataPeminjaman::class, 'export'])
+    ->name('peminjaman');
 });

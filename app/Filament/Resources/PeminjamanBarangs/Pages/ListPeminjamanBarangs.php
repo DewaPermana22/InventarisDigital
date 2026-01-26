@@ -19,6 +19,7 @@ class ListPeminjamanBarangs extends ListRecords
     {
         return "Ajukan peminjaman barang yang tersedia";
     }
+    
     protected function getHeaderActions(): array
     {
         return [
