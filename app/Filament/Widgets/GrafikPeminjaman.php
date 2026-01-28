@@ -4,85 +4,75 @@ namespace App\Filament\Widgets;
 
 use App\Enums\HakAkses;
 use Filament\Widgets\ChartWidget;
+use App\Models\PeminjamanBarang;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class GrafikPeminjaman extends ChartWidget
 {
-
     public static function canView(): bool
     {
         return Auth::user()?->role == HakAkses::SUPERADMIN;
     }
-    protected ?string $heading = 'Grafik Peminjaman';
 
-    protected static ?int $sort = 2;
+    protected ?string $heading = 'Grafik Peminjaman (12 Bulan Terakhir)';
+
+    public function getColumnSpan(): int|string|array
+    {
+        return 'full';
+    }
 
     protected function getData(): array
     {
+        $peminjaman = PeminjamanBarang::select(
+            DB::raw('COUNT(id) as total'),
+            DB::raw('MONTH(tanggal_pinjam) as month'),
+            DB::raw('YEAR(tanggal_pinjam) as year')
+        )
+            ->where('tanggal_pinjam', '>=', Carbon::now()->subMonths(11)->startOfMonth())
+            ->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        $labels = [];
+        $data = [];
+
+        for ($i = 11; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $labels[] = $date->translatedFormat('M Y');
+
+            $found = $peminjaman->first(
+                fn($item) =>
+                $item->month == $date->month && $item->year == $date->year
+            );
+
+            $data[] = $found->total ?? 0;
+        }
+
         return [
             'datasets' => [
                 [
-                    'label' => 'Peminjaman',
-                    'data' => [45, 32, 28, 15, 12, 8],
-                    'backgroundColor' => [
-                        'rgba(59, 130, 246, 0.7)',
-                        'rgba(16, 185, 129, 0.7)',
-                        'rgba(245, 158, 11, 0.7)',
-                        'rgba(239, 68, 68, 0.7)',
-                        'rgba(139, 92, 246, 0.7)',
-                        'rgba(236, 72, 153, 0.7)',
-                    ],
-                    'borderColor' => [
-                        'rgb(59, 130, 246)',
-                        'rgb(16, 185, 129)',
-                        'rgb(245, 158, 11)',
-                        'rgb(239, 68, 68)',
-                        'rgb(139, 92, 246)',
-                        'rgb(236, 72, 153)',
-                    ],
-                    'borderWidth' => 2,
+                    'label' => 'Jumlah Peminjaman',
+                    'data' => $data,
+                    'fill' => true, // AREA chart
+                    'borderColor' => '#6366F1', // indigo-500
+                    'backgroundColor' => 'rgba(99, 102, 241, 0.3)',
+                    'tension' => 0.4,
                 ],
             ],
-            'labels' => [
-                'Laptop',
-                'Proyektor',
-                'Kamera',
-                'Sound System',
-                'Microphone',
-                'Tripod',
-            ],
+            'labels' => $labels,
         ];
     }
 
     protected function getType(): string
     {
-        return 'polarArea';
+        return 'line'; // area = line + fill
     }
 
-    protected function getOptions(): array
+    protected function getMaxHeight(): ?string
     {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => true,
-                    'position' => 'bottom',
-                ],
-                'tooltip' => [
-                    'enabled' => true,
-                ],
-            ],
-            'scales' => [
-                'r' => [
-                    'beginAtZero' => true,
-                    'ticks' => [
-                        'display' => true,
-                        'stepSize' => 10,
-                    ],
-                    'grid' => [
-                        'color' => 'rgba(0, 0, 0, 0.1)',
-                    ],
-                ],
-            ],
-        ];
+        return '300px';
     }
 }

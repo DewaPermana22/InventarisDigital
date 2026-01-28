@@ -1,22 +1,20 @@
 <?php
 
-namespace App\Filament\Resources\PengajuanPeminjamen\Pages;
+namespace App\Filament\Resources\PeminjamanRuanganSuperAdmins\Pages;
 
-use App\Filament\Resources\PengajuanPeminjamen\PengajuanPeminjamanResource;
+use App\Filament\Resources\PeminjamanRuanganSuperAdmins\PeminjamanRuanganSuperAdminResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditPengajuanPeminjaman extends EditRecord
+class EditPeminjamanRuanganSuperAdmin extends EditRecord
 {
-    protected static string $resource = PengajuanPeminjamanResource::class;
+    protected static string $resource = PeminjamanRuanganSuperAdminResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
             DeleteAction::make(),
             ForceDeleteAction::make(),
             RestoreAction::make(),

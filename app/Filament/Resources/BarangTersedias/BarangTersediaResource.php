@@ -5,19 +5,14 @@ namespace App\Filament\Resources\BarangTersedias;
 use App\Enums\HakAkses;
 use App\Enums\KondisiBarang;
 use App\Enums\StatusPeminjaman;
-use App\Filament\Resources\BarangTersedias\Pages\CreateBarangTersedia;
-use App\Filament\Resources\BarangTersedias\Pages\EditBarangTersedia;
 use App\Filament\Resources\BarangTersedias\Pages\ListBarangTersedias;
-use App\Filament\Resources\BarangTersedias\Pages\ViewBarangTersedia;
 use App\Filament\Resources\BarangTersedias\Schemas\BarangTersediaForm;
-use App\Filament\Resources\BarangTersedias\Schemas\BarangTersediaInfolist;
 use App\Filament\Resources\BarangTersedias\Tables\BarangTersediasTable;
 use App\Models\Barang;
-use App\Models\BarangTersedia;
 use BackedEnum;
+use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -37,8 +32,7 @@ class BarangTersediaResource extends Resource
         return Auth::user()?->role == HakAkses::USER;
     }
     protected static string|UnitEnum|null $navigationGroup = "Aktivitas";
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Cube;
+    protected static string|BackedEnum|null $navigationIcon = LucideIcon::Package;
 
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $label = "Barang Tersedia";

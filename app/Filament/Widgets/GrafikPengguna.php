@@ -15,12 +15,11 @@ class GrafikPengguna extends ChartWidget
     {
         return Auth::user()?->role === HakAkses::SUPERADMIN;
     }
-    
+
     protected ?string $heading = 'Pertumbuhan Pengguna (12 Bulan Terakhir)';
 
     protected function getData(): array
     {
-        // Ambil data user per bulan (12 bulan terakhir)
         $users = User::select(
             DB::raw('COUNT(id) as total'),
             DB::raw('MONTH(created_at) as month'),
@@ -32,17 +31,16 @@ class GrafikPengguna extends ChartWidget
             ->orderBy('month')
             ->get();
 
-        // Siapkan label dan data default 0
         $labels = [];
         $data = [];
 
         for ($i = 11; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $labels[] = $date->translatedFormat('M Y');
+            $labels[] = $date->translatedFormat('M');
 
             $found = $users->first(
-                fn($item) =>
-                $item->month == $date->month && $item->year == $date->year
+                fn ($item) =>
+                    $item->month == $date->month && $item->year == $date->year
             );
 
             $data[] = $found->total ?? 0;
@@ -52,7 +50,10 @@ class GrafikPengguna extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Pengguna Baru',
+                    'borderColor' => '#6366F1', // indigo-500
+                    'backgroundColor' => 'rgba(99, 102, 241, 0.3)',
                     'data' => $data,
+                    'borderRadius' => 6,
                 ],
             ],
             'labels' => $labels,
@@ -62,5 +63,9 @@ class GrafikPengguna extends ChartWidget
     protected function getType(): string
     {
         return 'bar';
+    }
+    protected function getMaxHeight(): ?string
+    {
+        return '300px';
     }
 }

@@ -10,9 +10,9 @@ use App\Filament\Resources\Ruangans\Schemas\RuanganForm;
 use App\Filament\Resources\Ruangans\Tables\RuangansTable;
 use App\Models\Ruangan;
 use BackedEnum;
+use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
@@ -22,8 +22,7 @@ class RuanganResource extends Resource
     protected static ?string $model = Ruangan::class;
 
     //Untuk Ganti Icon
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice2;
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::BuildingOffice2;
+    protected static string|BackedEnum|null $navigationIcon = LucideIcon::Building2;
     protected static ?string $navigationLabel = "Ruangan";
     protected static ?string $breadcrumb = "Ruangan";
     protected static ?string $recordTitleAttribute = 'name';

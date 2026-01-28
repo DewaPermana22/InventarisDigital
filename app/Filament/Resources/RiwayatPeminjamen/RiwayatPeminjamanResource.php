@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\RiwayatPeminjamen;
 
 use App\Enums\HakAkses;
+use App\Enums\StatusPeminjaman;
 use App\Filament\Resources\RiwayatPeminjamen\Pages\CreateRiwayatPeminjaman;
 use App\Filament\Resources\RiwayatPeminjamen\Pages\EditRiwayatPeminjaman;
 use App\Filament\Resources\RiwayatPeminjamen\Pages\ListRiwayatPeminjamen;
@@ -13,6 +14,7 @@ use App\Filament\Resources\RiwayatPeminjamen\Tables\RiwayatPeminjamenTable;
 use App\Models\PeminjamanBarang;
 use App\Models\RiwayatPeminjaman;
 use BackedEnum;
+use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -29,8 +31,7 @@ class RiwayatPeminjamanResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = "Riwayat";
     protected static ?string $label = "Riwayat Peminjaman";
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Clock;
+    protected static string|BackedEnum|null $navigationIcon = LucideIcon::Clock;
     protected static ?int $navigationSort = 1;
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -67,6 +68,11 @@ class RiwayatPeminjamanResource extends Resource
             'index' => ListRiwayatPeminjamen::route('/'),
             'view' => ViewRiwayatPeminjaman::route('/{record}'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->whereIn('status', StatusPeminjaman::inactive());
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

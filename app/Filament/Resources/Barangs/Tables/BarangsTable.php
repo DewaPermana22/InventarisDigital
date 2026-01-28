@@ -128,7 +128,6 @@ class BarangsTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
                     BulkAction::make('download_barcode_pdf')
                         ->label('Download Barcode')
                         ->icon(Heroicon::OutlinedQrCode)

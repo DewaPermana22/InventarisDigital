@@ -35,7 +35,7 @@ class GrafikRuangan extends ChartWidget
 
         for ($i = 11; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-            $labels[] = $date->translatedFormat('M Y');
+            $labels[] = $date->translatedFormat('M ');
 
             $found = $dataDb->first(
                 fn($item) =>
@@ -50,7 +50,16 @@ class GrafikRuangan extends ChartWidget
                 [
                     'label' => 'Ruangan Baru',
                     'data' => $data,
-                ],
+                    // 'borderColor' => '#6366F1',
+                    'backgroundColor' => [
+                        'rgba(99, 102, 241, 0.4)',  // indigo-500
+                        'rgba(129, 140, 248, 0.4)', // indigo-400
+                        'rgba(165, 180, 252, 0.4)', // indigo-300
+                        'rgba(139, 92, 246, 0.4)',  // violet-500
+                        'rgba(167, 139, 250, 0.4)', // violet-400
+                        'rgba(196, 181, 253, 0.4)', // violet-300
+                    ]
+                ]
             ],
             'labels' => $labels,
         ];
@@ -58,6 +67,11 @@ class GrafikRuangan extends ChartWidget
 
     protected function getType(): string
     {
-        return 'line';
+        return 'doughnut';
+    }
+
+    protected function getMaxHeight(): ?string
+    {
+        return '210px';
     }
 }

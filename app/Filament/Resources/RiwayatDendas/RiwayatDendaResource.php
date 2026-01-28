@@ -13,6 +13,7 @@ use App\Filament\Resources\RiwayatDendas\Tables\RiwayatDendasTable;
 use App\Models\PeminjamanBarang;
 use App\Models\RiwayatDenda;
 use BackedEnum;
+use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -26,8 +27,7 @@ class RiwayatDendaResource extends Resource
 {
     protected static ?string $model = PeminjamanBarang::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Banknotes;
+    protected static string|BackedEnum|null $navigationIcon = LucideIcon::HandCoins;
 
     public static function canViewAny(): bool
     {
@@ -44,7 +44,7 @@ class RiwayatDendaResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $label = "Riwayat Denda";
-    
+
     public static function form(Schema $schema): Schema
     {
         return RiwayatDendaForm::configure($schema);

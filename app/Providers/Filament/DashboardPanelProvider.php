@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\BarangStats;
 use App\Filament\Widgets\DashboardStats;
 use App\Filament\Widgets\GrafikPeminjaman;
 use App\Filament\Widgets\GrafikPengguna;
@@ -15,8 +16,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
+use App\Filament\Widgets\PeminjamStats;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -61,9 +61,11 @@ class DashboardPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 DashboardStats::class,
+                GrafikPeminjaman::class,
                 GrafikPengguna::class,
                 GrafikRuangan::class,
-                GrafikPeminjaman::class,
+                BarangStats::class,
+                PeminjamStats::class,
             ])
             ->viteTheme('resources/css/filament/superadmin/theme.css')
             ->middleware([

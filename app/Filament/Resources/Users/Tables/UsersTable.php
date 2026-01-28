@@ -11,6 +11,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -95,11 +96,10 @@ class UsersTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
                     BulkAction::make('cetakKartu')
                         ->label('Cetak Kartu')
-                        ->icon('heroicon-o-printer')
-                        ->color(Color::Green)
+                        ->icon(Heroicon::OutlinedPrinter)
+                        ->color('primary')
                         ->action(function ($records) {
                             if ($records->count() > 4) {
                                 Notification::make()

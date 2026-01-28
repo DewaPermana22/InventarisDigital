@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\PengajuanPeminjamen;
+namespace App\Filament\Resources\DataPengembalians;
 
 use App\Enums\HakAkses;
-use App\Enums\StatusPeminjaman;
-use App\Filament\Resources\PengajuanPeminjamen\Pages\ListPengajuanPeminjamen;
-use App\Filament\Resources\PengajuanPeminjamen\Schemas\PengajuanPeminjamanForm;
-use App\Filament\Resources\PengajuanPeminjamen\Schemas\PengajuanPeminjamanInfolist;
-use App\Filament\Resources\PengajuanPeminjamen\Tables\PengajuanPeminjamenTable;
+use App\Filament\Resources\DataPengembalians\Pages\CreateDataPengembalian;
+use App\Filament\Resources\DataPengembalians\Pages\EditDataPengembalian;
+use App\Filament\Resources\DataPengembalians\Pages\ListDataPengembalians;
+use App\Filament\Resources\DataPengembalians\Pages\ViewDataPengembalian;
+use App\Filament\Resources\DataPengembalians\Schemas\DataPengembalianForm;
+use App\Filament\Resources\DataPengembalians\Schemas\DataPengembalianInfolist;
+use App\Filament\Resources\DataPengembalians\Tables\DataPengembaliansTable;
 use App\Models\PeminjamanBarang;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -19,9 +21,11 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
-class PengajuanPeminjamanResource extends Resource
+class DataPengembalianResource extends Resource
 {
     protected static ?string $model = PeminjamanBarang::class;
+
+    protected static ?int $navigationSort = 1;
     public static function canViewAny(): bool
     {
         return Auth::user()?->role == HakAkses::ADMIN;
@@ -31,29 +35,29 @@ class PengajuanPeminjamanResource extends Resource
     {
         return Auth::user()?->role == HakAkses::ADMIN;
     }
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ClipboardDocumentCheck;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBoxArrowDown;
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ArchiveBoxArrowDown;
+
     protected static string|UnitEnum|null $navigationGroup = "Aktivitas";
-    protected static ?string $navigationLabel = "Pengajuan Peminjaman";
-    public static function getBreadcrumb(): string
-    {
-        return "Pengajuan Peminjaman";
-    }
+    protected static ?string $navigationLabel = "Pengembalian Barang";
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $label = "Pengembalian Barang";
 
     public static function form(Schema $schema): Schema
     {
-        return PengajuanPeminjamanForm::configure($schema);
+        return DataPengembalianForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return PengajuanPeminjamanInfolist::configure($schema);
+        return DataPengembalianInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return PengajuanPeminjamenTable::configure($table);
+        return DataPengembaliansTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -66,17 +70,9 @@ class PengajuanPeminjamanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListPengajuanPeminjamen::route('/'),
+            'index' => ListDataPengembalians::route('/'),
+            'view' => ViewDataPengembalian::route('/{record}'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->where('status', StatusPeminjaman::BELUM_DISETUJUI)
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

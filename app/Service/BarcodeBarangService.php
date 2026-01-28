@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Enums\KondisiBarang;
 use App\Models\Barang;
 use Milon\Barcode\DNS1D;
 use Illuminate\Support\Facades\Storage;

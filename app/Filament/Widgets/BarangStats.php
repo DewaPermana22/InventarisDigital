@@ -4,29 +4,30 @@ namespace App\Filament\Widgets;
 
 use App\Enums\HakAkses;
 use App\Enums\KondisiBarang;
+use App\Models\Barang;
+use Filament\Support\Enums\IconPosition;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use App\Models\User;
-use App\Models\Barang;
-use App\Models\Ruangan;
-use Filament\Support\Enums\IconPosition;
 use Illuminate\Support\Facades\Auth;
 
-class DashboardStats extends StatsOverviewWidget
+class BarangStats extends StatsOverviewWidget
 {
-    public static function canView(): bool
+     public static function canView(): bool
     {
-        return Auth::user()?->role == HakAkses::SUPERADMIN;
+        return Auth::user()?->role == HakAkses::ADMIN;
     }
-    
+
+    protected function getHeading(): ?string
+    {
+        return "Statistik Barang";
+    }
     protected function getStats(): array
     {
         return [
             Stat::make(
-                'Total Pengguna',
-                User::where('role', HakAkses::USER)
-                    ->where('is_active', 1)
+                'Kondisi Baik',
+                Barang::where('kondisi', KondisiBarang::BAIK)
                     ->count()
             )
                 ->description('Jumlah pengguna aktif')
@@ -34,16 +35,16 @@ class DashboardStats extends StatsOverviewWidget
                 ->color('success'),
 
             Stat::make(
-                'Total Barang',
-                Barang::count()
+                'Kondisi Maintenance',
+                Barang::where('kondisi', KondisiBarang::PERBAIKAN)->count()
             )
                 ->description('Jumlah barang tercatat dalam sistem')
                 ->descriptionIcon(Heroicon::OutlinedCube)
                 ->color('primary'),
 
             Stat::make(
-                'Total Ruangan',
-                Ruangan::count()
+                'Kondisi Rusak',
+                Barang::where('kondisi', KondisiBarang::RUSAK)->count()
             )
                 ->description('Jumlah ruangan terdaftar')
                 ->descriptionIcon('heroicon-o-building-office')

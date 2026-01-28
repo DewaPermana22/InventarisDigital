@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Barangs;
 
 use App\Enums\HakAkses;
-use App\Enums\KondisiBarang;
 use App\Filament\Resources\Barangs\Pages\CreateBarang;
 use App\Filament\Resources\Barangs\Pages\EditBarang;
 use App\Filament\Resources\Barangs\Pages\ListBarangs;
@@ -38,7 +37,6 @@ class BarangResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = "Inventaris";
     protected static ?string $navigationLabel = 'Data Barang';
     protected static ?string $breadcrumb = 'Data Barang';
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Cube;
 
     public static function form(Schema $schema): Schema
     {

@@ -5,13 +5,13 @@ namespace App\Filament\Resources\PeminjamanBarangs;
 use App\Enums\HakAkses;
 use App\Enums\StatusPeminjaman;
 use App\Filament\Resources\PeminjamanBarangs\Pages\CreatePeminjamanBarang;
-use App\Filament\Resources\PeminjamanBarangs\Pages\EditPeminjamanBarang;
 use App\Filament\Resources\PeminjamanBarangs\Pages\ListPeminjamanBarangs;
 use App\Filament\Resources\PeminjamanBarangs\Pages\ViewPeminjamanBarang;
 use App\Filament\Resources\PeminjamanBarangs\Schemas\PeminjamanBarangForm;
 use App\Filament\Resources\PeminjamanBarangs\Tables\PeminjamanBarangsTable;
 use App\Models\PeminjamanBarang;
 use BackedEnum;
+use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -25,8 +25,7 @@ class PeminjamanBarangResource extends Resource
 {
     protected static ?string $model = PeminjamanBarang::class;
     protected static string|UnitEnum|null $navigationGroup = "Aktivitas";
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ClipboardDocumentList;
+    protected static string|BackedEnum|null $navigationIcon = LucideIcon::PackagePlus;
 
     public static function canViewAny(): bool
     {
