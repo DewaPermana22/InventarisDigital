@@ -3,74 +3,69 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\HakAkses;
-use Filament\Widgets\ChartWidget;
 use App\Models\PeminjamanBarang;
 use Carbon\Carbon;
+use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
-class GrafikPeminjaman extends ChartWidget
+class GrafikPinjambarang extends ChartWidget
 {
+    protected ?string $heading = 'Grafik Peminjaman Barang Tahun Ini';
+    protected static ?int $sort = 1;
     public static function canView(): bool
     {
-        return Auth::user()?->role === HakAkses::SUPERADMIN;
-    }
-
-    protected ?string $heading = 'Grafik Peminjaman Tahun Ini';
-
-    public function getColumnSpan(): int|string|array
-    {
-        return 'full';
+        return Auth::user()?->role === HakAkses::USER;
     }
 
     protected function getData(): array
     {
+        $userId = Auth::id();
         $year = now()->year;
 
-        $peminjaman = PeminjamanBarang::select(
-            DB::raw('COUNT(id) as total'),
-            DB::raw('MONTH(tanggal_pinjam) as month')
-        )
+        $data = PeminjamanBarang::query()
+            ->selectRaw('MONTH(tanggal_pinjam) as bulan, COUNT(*) as total')
             ->whereYear('tanggal_pinjam', $year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+            ->where('peminjam_id', $userId)
+            ->groupByRaw('MONTH(tanggal_pinjam)')
+            ->orderByRaw('MONTH(tanggal_pinjam)')
+            ->pluck('total', 'bulan');
 
+        // Label bulan 1-12
         $labels = [];
-        $data = [];
+        $values = [];
 
         for ($i = 1; $i <= 12; $i++) {
             $labels[] = Carbon::create()->month($i)->translatedFormat('F');
-
-            $found = $peminjaman->first(
-                fn($item) => $item->month == $i
-            );
-
-            $data[] = $found->total ?? 0;
+            $values[] = $data[$i] ?? 0;
         }
 
         return [
             'datasets' => [
                 [
                     'label' => 'Jumlah Peminjaman',
-                    'data' => $data,
+                    'data' => $values,
                     'fill' => true,
+                    'tension' => 0.4,
                     'borderColor' => '#6366F1',
                     'backgroundColor' => 'rgba(99, 102, 241, 0.3)',
-                    'tension' => 0.4,
                 ],
             ],
             'labels' => $labels,
         ];
     }
 
-    protected function getType(): string
+    public function getColumnSpan(): int|string|array
     {
-        return 'line';
+        return 'full';
     }
 
     protected function getMaxHeight(): ?string
     {
         return '300px';
+    }
+
+    protected function getType(): string
+    {
+        return 'line';
     }
 }

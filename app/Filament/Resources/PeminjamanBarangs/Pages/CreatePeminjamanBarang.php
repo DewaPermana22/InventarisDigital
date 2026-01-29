@@ -2,7 +2,10 @@
 
 namespace App\Filament\Resources\PeminjamanBarangs\Pages;
 
+use App\Enums\HakAkses;
 use App\Filament\Resources\PeminjamanBarangs\PeminjamanBarangResource;
+use App\Models\User;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Support\Colors\Color;
 use Illuminate\Contracts\Support\Htmlable;
@@ -14,6 +17,15 @@ class CreatePeminjamanBarang extends CreateRecord
     {
         return "Ajukan Peminjaman Barang";
     }
+
+    protected function getCreatedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->title('Pengajuan Berhasil')
+            ->body('Silakan menunggu persetujuan dari petugas.')
+            ->success();
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['peminjam_id'] = Auth::user()->id;
@@ -26,6 +38,24 @@ class CreatePeminjamanBarang extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+    protected function afterCreate(): void
+    {
+        $barang = $this->record->barang;
+
+        $petugas = User::where('role', HakAkses::ADMIN)
+            ->where('is_active', true)
+            ->get();
+
+        if ($petugas->isNotEmpty() && $barang) {
+            Notification::make()
+                ->title('Pengajuan Peminjaman Baru')
+                ->body('Ada pengajuan peminjaman barang dari '. $this->record->peminjam->name . ' yang perlu disetujui.')
+                ->success()
+                ->sendToDatabase($petugas);
+        }
+    }
+
     protected function getFormActions(): array
     {
         return [

@@ -26,6 +26,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Enums\HakAkses;
 
 class PeminjamanBarangsTable
 {
@@ -101,29 +102,29 @@ class PeminjamanBarangsTable
                             'status' => StatusPeminjaman::DIBATALKAN,
                             'updated_at' => now()
                         ]);
-                    }),
 
-                // Kembalikan Barang
-                // Action::make('kembalikan')
-                // ->label('Kembalikan')
-                // ->color('success')
-                // ->icon(Heroicon::Pencil)
-                // ->visible(
-                //     fn($record) =>
-                //     $record->status === StatusPeminjaman::DIPINJAM
-                // )
-                // ->button()
-                // ->requiresConfirmation()
-                // ->modalHeading('Kembalikan Barang?')
-                // ->modalDescription("Anda yakin ingin mengembalikan barang yang anda pinjam?")
-                // ->modalIcon(Heroicon::OutlinedCheckBadge)
-                // ->modalSubmitActionLabel('Ya, Kembalikan')
-                // ->action(function ($record) {
-                //     $record->update([
-                //         'status' => StatusPeminjaman::DIKEMBALIKAN,
-                //         'updated_at' => now()
-                //     ]);
-                // }),
+                        $petugas = User::where('role', HakAkses::ADMIN)->where('is_active', true)->get();
+                        // notifikasi ke peminjam
+                        Notification::make()
+                            ->title('Pengajuan Berhasil Dibatalkan')
+                            ->body('Pengajuan peminjaman barang Anda telah dibatalkan.')
+                            ->success()
+                            ->sendToDatabase($record->peminjam);
+
+                        //Pop Up
+                        Notification::make()
+                            ->title('Pengajuan Berhasil Dibatalkan')
+                            ->body('Pengajuan peminjaman barang Anda telah dibatalkan.')
+                            ->success()
+                            ->send();
+
+                        // notifikasi ke petugas
+                        Notification::make()
+                            ->title('Peminjaman Dibatalkan')
+                            ->danger()
+                            ->body('Peminjaman ' . $record->barang->name . ' oleh ' . $record->peminjam->name . ' telah dibatalkan.')
+                            ->sendToDatabase($petugas);
+                    }),
 
                 // Kembalikan (Sudah Dipinjam)
                 Action::make('scan_barcode')
@@ -203,7 +204,7 @@ class PeminjamanBarangsTable
                             "Anda terlambat <strong>{$hariTerlambat} hari</strong>.<br> Total denda: <strong>Rp " . number_format($denda, 0, ',', '.') . "</strong>"
                         );
                     })
-                    
+
                     ->form([
                         Select::make('metode_pembayaran')
                             ->label('Metode Pembayaran')
@@ -264,6 +265,7 @@ class PeminjamanBarangsTable
                                 'nama_ewallet'          => $data['jenis_ewallet'] ?? null,
                                 'total_bayar'           => $totalBayar,
                                 'catatan'               => $data['keterangan'] ?? null,
+                                'created_by'            => Auth::id()
                             ]);
 
                             DB::commit();

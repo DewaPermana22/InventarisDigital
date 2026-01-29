@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class BarangStats extends StatsOverviewWidget
 {
-     public static function canView(): bool
+    public static function canView(): bool
     {
         return Auth::user()?->role == HakAkses::ADMIN;
     }
@@ -27,28 +27,27 @@ class BarangStats extends StatsOverviewWidget
         return [
             Stat::make(
                 'Kondisi Baik',
-                Barang::where('kondisi', KondisiBarang::BAIK)
-                    ->count()
+                Barang::where('kondisi', KondisiBarang::BAIK)->count()
             )
-                ->description('Jumlah pengguna aktif')
-                ->descriptionIcon(Heroicon::OutlinedUsers, IconPosition::Before)
+                ->description('Barang siap digunakan')
+                ->descriptionIcon(Heroicon::OutlinedCheckCircle, IconPosition::Before)
                 ->color('success'),
 
             Stat::make(
                 'Kondisi Maintenance',
                 Barang::where('kondisi', KondisiBarang::PERBAIKAN)->count()
             )
-                ->description('Jumlah barang tercatat dalam sistem')
-                ->descriptionIcon(Heroicon::OutlinedCube)
-                ->color('primary'),
+                ->description('Barang sedang diperbaiki')
+                ->descriptionIcon(Heroicon::OutlinedWrenchScrewdriver, IconPosition::Before)
+                ->color('warning'),
 
             Stat::make(
                 'Kondisi Rusak',
                 Barang::where('kondisi', KondisiBarang::RUSAK)->count()
             )
-                ->description('Jumlah ruangan terdaftar')
-                ->descriptionIcon('heroicon-o-building-office')
-                ->color('info'),
+                ->description('Barang tidak dapat digunakan')
+                ->descriptionIcon(Heroicon::OutlinedXCircle, IconPosition::Before)
+                ->color('danger'),
         ];
     }
 }

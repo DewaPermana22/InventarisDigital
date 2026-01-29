@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\DataPengembalians;
 
 use App\Enums\HakAkses;
+use App\Enums\StatusPeminjaman;
 use App\Filament\Resources\DataPengembalians\Pages\CreateDataPengembalian;
 use App\Filament\Resources\DataPengembalians\Pages\EditDataPengembalian;
 use App\Filament\Resources\DataPengembalians\Pages\ListDataPengembalians;
@@ -12,6 +13,7 @@ use App\Filament\Resources\DataPengembalians\Schemas\DataPengembalianInfolist;
 use App\Filament\Resources\DataPengembalians\Tables\DataPengembaliansTable;
 use App\Models\PeminjamanBarang;
 use BackedEnum;
+use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -36,8 +38,7 @@ class DataPengembalianResource extends Resource
         return Auth::user()?->role == HakAkses::ADMIN;
     }
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArchiveBoxArrowDown;
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ArchiveBoxArrowDown;
+    protected static string|BackedEnum|null $navigationIcon = LucideIcon::ArchiveRestore;
 
     protected static string|UnitEnum|null $navigationGroup = "Aktivitas";
     protected static ?string $navigationLabel = "Pengembalian Barang";
@@ -73,6 +74,15 @@ class DataPengembalianResource extends Resource
             'index' => ListDataPengembalians::route('/'),
             'view' => ViewDataPengembalian::route('/{record}'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('status', StatusPeminjaman::MENUNGGU_VERIFIKASI)
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

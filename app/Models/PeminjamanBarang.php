@@ -46,4 +46,9 @@ class PeminjamanBarang extends Model
     {
         return $this->belongsTo(Barang::class);
     }
+
+    public function verifikasiPengembalian()
+    {
+        return $this->hasOne(VerifikasiPengembalian::class, 'peminjaman_id');
+    }
 }

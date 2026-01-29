@@ -32,7 +32,7 @@ class CreatePeminjamanBarangSuperAdmin extends CreateRecord
         $peminjam = User::find($this->record->peminjam_id);
         $barang = $this->record->barang;
 
-        if ($peminjam) {
+        if ($peminjam && $barang) {
             Notification::make()
                 ->title('Peminjaman Barang Baru')
                 ->body('Anda memiliki peminjaman barang baru. Silakan cek detail peminjaman Anda.')

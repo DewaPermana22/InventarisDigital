@@ -16,31 +16,29 @@ class GrafikPengguna extends ChartWidget
         return Auth::user()?->role === HakAkses::SUPERADMIN;
     }
 
-    protected ?string $heading = 'Pertumbuhan Pengguna (12 Bulan Terakhir)';
+    protected ?string $heading = 'Pertumbuhan Pengguna Tahun Ini';
 
     protected function getData(): array
     {
+        $year = now()->year;
+
         $users = User::select(
             DB::raw('COUNT(id) as total'),
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('YEAR(created_at) as year')
+            DB::raw('MONTH(created_at) as month')
         )
-            ->where('created_at', '>=', Carbon::now()->subMonths(11)->startOfMonth())
-            ->groupBy('year', 'month')
-            ->orderBy('year')
+            ->whereYear('created_at', $year)
+            ->groupBy('month')
             ->orderBy('month')
             ->get();
 
         $labels = [];
         $data = [];
 
-        for ($i = 11; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $labels[] = $date->translatedFormat('M');
+        for ($i = 1; $i <= 12; $i++) {
+            $labels[] = Carbon::create()->month($i)->translatedFormat('F');
 
             $found = $users->first(
-                fn ($item) =>
-                    $item->month == $date->month && $item->year == $date->year
+                fn($item) => $item->month == $i
             );
 
             $data[] = $found->total ?? 0;
@@ -50,9 +48,9 @@ class GrafikPengguna extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Pengguna Baru',
-                    'borderColor' => '#6366F1', // indigo-500
-                    'backgroundColor' => 'rgba(99, 102, 241, 0.3)',
                     'data' => $data,
+                    'borderColor' => '#6366F1',
+                    'backgroundColor' => 'rgba(99, 102, 241, 0.3)',
                     'borderRadius' => 6,
                 ],
             ],
@@ -64,6 +62,7 @@ class GrafikPengguna extends ChartWidget
     {
         return 'bar';
     }
+
     protected function getMaxHeight(): ?string
     {
         return '300px';

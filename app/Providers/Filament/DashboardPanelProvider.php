@@ -17,6 +17,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use App\Filament\Widgets\PeminjamStats;
+use App\Filament\Widgets\PetugasPeminjamanChart;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -66,6 +67,7 @@ class DashboardPanelProvider extends PanelProvider
                 GrafikRuangan::class,
                 BarangStats::class,
                 PeminjamStats::class,
+                PetugasPeminjamanChart::class
             ])
             ->viteTheme('resources/css/filament/superadmin/theme.css')
             ->middleware([

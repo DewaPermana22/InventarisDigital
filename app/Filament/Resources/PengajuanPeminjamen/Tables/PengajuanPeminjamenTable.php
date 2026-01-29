@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\PengajuanPeminjamen\Tables;
 
+use App\Enums\HakAkses;
 use App\Enums\StatusPeminjaman;
+use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -91,6 +93,18 @@ class PengajuanPeminjamenTable
                             'tanggal_kembali'   => $now->copy()->addDays(7),
                         ]);
 
+                        $petugasLogin = Auth::user();
+
+                        // Semua ADMIN (petugas)
+                        $admins = User::where('role', HakAkses::ADMIN)
+                            ->where('is_active', true)
+                            ->get();
+
+                        // Semua SUPERADMIN
+                        $superadmins = User::where('role', HakAkses::SUPERADMIN)
+                            ->where('is_active', true)
+                            ->get();
+
                         // NOTIFIKASI KE PEMINJAM
                         Notification::make()
                             ->title('Pengajuan Disetujui')
@@ -98,7 +112,16 @@ class PengajuanPeminjamenTable
                             ->success()
                             ->sendToDatabase($record->peminjam);
 
-                        // TOAST KE PETUGAS
+                        // NOTIFIKASI KE ADMIN & SUPERADMIN
+                        $targets = $admins->merge($superadmins);
+
+                        Notification::make()
+                            ->title('Pengajuan Disetujui')
+                            ->body($petugasLogin->name . ' telah menyetujui pengajuan barang')
+                            ->success()
+                            ->sendToDatabase($targets);
+
+                        // TOAST KE PETUGAS LOGIN
                         Notification::make()
                             ->title('Pengajuan berhasil disetujui')
                             ->success()
@@ -120,10 +143,23 @@ class PengajuanPeminjamenTable
                     ->modalIcon(Heroicon::OutlinedXCircle)
                     ->modalSubmitActionLabel('Ya, Tolak')
                     ->action(function ($record) {
+
                         $record->update([
                             'status'     => StatusPeminjaman::DITOLAK,
                             'updated_by' => Auth::id(),
                         ]);
+
+                        $petugasLogin = Auth::user();
+
+                        // Semua ADMIN (petugas)
+                        $admins = User::where('role', HakAkses::ADMIN)
+                            ->where('is_active', true)
+                            ->get();
+
+                        // Semua SUPERADMIN
+                        $superadmins = User::where('role', HakAkses::SUPERADMIN)
+                            ->where('is_active', true)
+                            ->get();
 
                         // NOTIFIKASI KE PEMINJAM
                         Notification::make()
@@ -132,12 +168,21 @@ class PengajuanPeminjamenTable
                             ->danger()
                             ->sendToDatabase($record->peminjam);
 
-                        // TOAST KE PETUGAS
+                        $targets = $admins->merge($superadmins);
+
+                        // NOTIFIKASI KE ADMIN dan PETUGAS
                         Notification::make()
-                            ->title('Pengajuan berhasil ditolak')
+                            ->title('Pengajuan Ditolak')
+                            ->body($petugasLogin->name . ' telah menolak pengajuan barang')
                             ->danger()
+                            ->sendToDatabase($targets);
+
+                        // TOAST KE PETUGAS LOGIN
+                        Notification::make()
+                            ->title('Berhasil menolak pengajuan')
+                            ->success()
                             ->send();
-                    }),
+                    })
 
             ])
             ->toolbarActions([

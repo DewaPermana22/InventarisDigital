@@ -10,9 +10,9 @@ use App\Filament\Resources\PengajuanPeminjamen\Schemas\PengajuanPeminjamanInfoli
 use App\Filament\Resources\PengajuanPeminjamen\Tables\PengajuanPeminjamenTable;
 use App\Models\PeminjamanBarang;
 use BackedEnum;
+use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -31,8 +31,7 @@ class PengajuanPeminjamanResource extends Resource
     {
         return Auth::user()?->role == HakAkses::ADMIN;
     }
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ClipboardDocumentCheck;
+    protected static string|BackedEnum|null $navigationIcon = LucideIcon::ClipboardClock;
     protected static string|UnitEnum|null $navigationGroup = "Aktivitas";
     protected static ?string $navigationLabel = "Pengajuan Peminjaman";
     public static function getBreadcrumb(): string
