@@ -45,19 +45,16 @@ class RiwayatDendaResource extends Resource
 
     protected static ?string $label = "Riwayat Denda";
 
-    public static function form(Schema $schema): Schema
-    {
-        return RiwayatDendaForm::configure($schema);
-    }
-
-    public static function infolist(Schema $schema): Schema
-    {
-        return RiwayatDendaInfolist::configure($schema);
-    }
-
     public static function table(Table $table): Table
     {
         return RiwayatDendasTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('peminjam_id', Auth::id())
+            ->whereHas('verifikasiPengembalian');
     }
 
     public static function getRelations(): array
@@ -71,9 +68,6 @@ class RiwayatDendaResource extends Resource
     {
         return [
             'index' => ListRiwayatDendas::route('/'),
-            'create' => CreateRiwayatDenda::route('/create'),
-            'view' => ViewRiwayatDenda::route('/{record}'),
-            'edit' => EditRiwayatDenda::route('/{record}/edit'),
         ];
     }
 

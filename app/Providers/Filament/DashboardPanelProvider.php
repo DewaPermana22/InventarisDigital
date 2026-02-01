@@ -34,6 +34,7 @@ class DashboardPanelProvider extends PanelProvider
         FilamentAsset::register([
             Js::make('html5-qrcode', 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'),
             Js::make('barcode-scanner', asset('js/scanner.js')),
+            Js::make('nprogress', asset('js/nprogress.js'))
         ]);
     }
     public function panel(Panel $panel): Panel
@@ -50,7 +51,6 @@ class DashboardPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->font('Nunito')
             ->authGuard('web')
-            ->sidebarCollapsibleOnDesktop(true)
             ->brandLogo(asset('logo/inventarisdg_light.svg'))
             ->darkModeBrandLogo(asset('logo/inventarisdg_dark.svg'))
             ->brandLogoHeight('2.5rem')

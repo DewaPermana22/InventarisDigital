@@ -17,8 +17,8 @@ class RiwayatPeminjamenTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->emptyStateHeading('Riwayat masih kosong')
-            ->emptyStateDescription('Belum ada data riwayat peminjaman barang.')
+            ->emptyStateHeading('Belum Ada Riwayat Denda')
+            ->emptyStateDescription('Anda belum memiliki catatan denda keterlambatan pengembalian barang.')
             ->columns([
                 TextColumn::make('barang.kode_barang')
                     ->label('Kode Barang')
