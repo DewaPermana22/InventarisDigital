@@ -11,6 +11,7 @@ enum StatusPeminjaman: string
     case DIKEMBALIKAN = 'dikembalikan';
     case TERLAMBAT = 'terlambat';
     case MENUNGGU_VERIFIKASI = 'proses_verifikasi';
+    case VERIFIKASI_DITOLAK = 'verifikasi_ditolak';
 
     public function label(): string
     {
@@ -22,6 +23,7 @@ enum StatusPeminjaman: string
             self::DIKEMBALIKAN => 'Dikembalikan',
             self::TERLAMBAT => 'Terlambat',
             self::MENUNGGU_VERIFIKASI => 'Menunggu Verifikasi',
+            self::VERIFIKASI_DITOLAK => 'Verifikasi Ditolak',
         };
     }
 
@@ -34,6 +36,7 @@ enum StatusPeminjaman: string
             self::TERLAMBAT => 'danger',
             self::DIBATALKAN => 'danger',
             self::DITOLAK => 'danger',
+            self::VERIFIKASI_DITOLAK => 'danger',
             self::MENUNGGU_VERIFIKASI => 'warning',
         };
     }
@@ -54,7 +57,8 @@ enum StatusPeminjaman: string
             self::BELUM_DISETUJUI,
             self::DIPINJAM,
             self::TERLAMBAT,
-            self::MENUNGGU_VERIFIKASI
+            self::MENUNGGU_VERIFIKASI,
+            self::VERIFIKASI_DITOLAK,
         ];
     }
 }

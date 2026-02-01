@@ -3,13 +3,18 @@
 namespace App\Filament\Resources\RiwayatDendas\Tables;
 
 use App\Enums\MethodePembayaran;
+use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class RiwayatDendasTable
@@ -44,10 +49,8 @@ class RiwayatDendasTable
 
                 TextColumn::make('verifikasiPengembalian.metode_pembayaran')
                     ->label('Metode Pembayaran')
-                    ->formatStateUsing(
-                        fn($state) =>
-                        $state ? MethodePembayaran::from($state)->label() : '-'
-                    ),
+                    ->formatStateUsing(fn($state) => $state?->label() ?? '-'),
+
 
                 TextColumn::make('verifikasiPengembalian.terverifikasi')
                     ->label('Status')
@@ -63,74 +66,66 @@ class RiwayatDendasTable
                 ViewAction::make('detail')
                     ->label('Detail')
                     ->color('primary')
+                    ->modalWidth('2xl')
+                    ->requiresConfirmation()
                     ->modalHeading('Detail Pengembalian & Denda')
                     ->modalDescription('Berikut adalah detail pengembalian barang dan pembayaran denda.')
-                    ->requiresConfirmation()
-                    ->form(fn($record) => [
-
+                    ->modalCancelAction(
+                        fn(Action $action) =>
+                        $action
+                            ->label('Tutup')
+                            ->color('danger')
+                    )
+                    ->infolist(fn($record) => [
                         Grid::make(2)->schema([
-                            TextInput::make('kode_barang')
+                            TextEntry::make('kode_barang')
                                 ->label('Kode Barang')
-                                ->default($record->barang?->kode_barang)
-                                ->disabled(),
+                                ->state($record->barang?->kode_barang),
 
-                            TextInput::make('nama_barang')
+                            TextEntry::make('nama_barang')
                                 ->label('Nama Barang')
-                                ->default($record->barang?->name)
-                                ->disabled(),
+                                ->state($record->barang?->name),
                         ]),
 
                         Grid::make(2)->schema([
-                            TextInput::make('tanggal_kembali')
+                            TextEntry::make('tanggal_kembali')
                                 ->label('Tanggal Kembali')
-                                ->default($record->tanggal_kembali?->format('d/m/Y'))
-                                ->disabled(),
+                                ->state($record->tanggal_kembali?->format('d/m/Y')),
 
-                            TextInput::make('total_denda')
+                            TextEntry::make('total_denda')
                                 ->label('Total Denda')
-                                ->default($record->verifikasiPengembalian?->total_bayar)
-                                ->disabled(),
+                                ->money('IDR')
+                                ->state($record->verifikasiPengembalian?->total_bayar),
                         ]),
 
                         Grid::make(2)->schema([
-                            TextInput::make('metode_pembayaran')
+                            TextEntry::make('metode_pembayaran')
                                 ->label('Metode Pembayaran')
-                                ->default(
-                                    $record->verifikasiPengembalian?->metode_pembayaran
-                                        ? \App\Enums\MethodePembayaran::from(
-                                            $record->verifikasiPengembalian?->metode_pembayaran
-                                        )->label()
-                                        : '-'
-                                )
-                                ->disabled(),
+                                ->state($record->verifikasiPengembalian?->metode_pembayaran?->label()),
 
-                            TextInput::make('status_verifikasi')
+                            TextEntry::make('status_verifikasi')
                                 ->label('Status')
-                                ->default(
+                                ->badge()
+                                ->color(
+                                    fn() =>
+                                    $record->verifikasiPengembalian?->terverifikasi
+                                        ? 'success'
+                                        : 'warning'
+                                )
+                                ->state(
                                     $record->verifikasiPengembalian?->terverifikasi
                                         ? 'Terverifikasi'
                                         : 'Belum Terverifikasi'
-                                )
-                                ->disabled(),
+                                ),
                         ]),
 
-                        FileUpload::make('bukti_pembayaran')
+                        ImageEntry::make('bukti_pembayaran')
                             ->label('Bukti Pembayaran')
+                            ->state($record->verifikasiPengembalian?->path_bukti_pembayaran)
                             ->disk('public')
-                            ->directory('bukti_pembayaran')
-                            ->image()
-                            ->openable()
-                            ->downloadable()
-                            ->previewable()
-                            ->deletable(false)
-                            ->disabled()
-                            ->default($record->verifikasiPengembalian?->path_bukti_pembayaran),
-
-                        Textarea::make('catatan')
-                            ->label('Catatan Petugas')
-                            ->default($record->verifikasiPengembalian?->catatan)
-                            ->disabled(),
+                            ->url(fn($state) => $state ? Storage::url($state) : null)
+                            ->openUrlInNewTab(),
                     ])
-            ]);
+            ])->striped();
     }
 }

@@ -17,6 +17,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Grid;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -28,25 +29,19 @@ class DataPengembaliansTable
         return $table
             ->emptyStateHeading('Data Verifikasi Pengembalian Kosong')
             ->emptyStateDescription('Belum terdapat pengajuan pengembalian yang masuk untuk diverifikasi.')
-            ->columns([
 
+            ->columns([
                 ImageColumn::make('barang.foto')
                     ->label('Foto')
                     ->square()
-                    ->defaultImageUrl(url('/images/placeholder.png'))
-                    ->extraImgAttributes([
-                        'alt' => 'Foto Barang',
-                        'loading' => 'lazy',
-                    ]),
+                    ->defaultImageUrl(url('/images/placeholder.png')),
 
                 TextColumn::make('barang.kode_barang')
                     ->label('Kode Barang')
                     ->searchable()
                     ->copyable()
-                    ->copyMessage('Kode barang disalin!')
                     ->sortable()
                     ->formatStateUsing(fn($state) => Str::limit($state, 20))
-                    ->tooltip(fn($state) => $state)
                     ->weight('bold'),
 
                 TextColumn::make('barang.name')
@@ -54,7 +49,6 @@ class DataPengembaliansTable
                     ->searchable()
                     ->sortable()
                     ->formatStateUsing(fn($state) => Str::limit($state, 20))
-                    ->tooltip(fn($state) => $state)
                     ->weight('bold'),
 
                 TextColumn::make('created_at')
@@ -66,8 +60,7 @@ class DataPengembaliansTable
                     ->label('Status')
                     ->badge()
                     ->color(fn(StatusPeminjaman $state) => $state->color())
-                    ->formatStateUsing(fn(StatusPeminjaman $state) => $state->label())
-                    ->searchable(),
+                    ->formatStateUsing(fn(StatusPeminjaman $state) => $state->label()),
             ])
 
             ->filters([
@@ -77,57 +70,58 @@ class DataPengembaliansTable
             ->recordActions([
                 Action::make('verifikasi')
                     ->label('Verifikasi')
-                    ->color('warning')
+                    ->color('success')
                     ->icon(Heroicon::DocumentCheck)
                     ->visible(fn($record) => $record->status === StatusPeminjaman::MENUNGGU_VERIFIKASI)
                     ->button()
                     ->modalHeading('Verifikasi Pengembalian')
-                    ->modalDescription('Periksa data peminjaman sebelum memverifikasi.')
+                    ->modalDescription('Periksa data sebelum memverifikasi.')
+                    ->modalWidth('2xl')
+                    ->modalSubmitAction(fn(Action $action) =>
+                    $action
+                        ->label('Verifikasi')
+                        ->color('success'))
+                    ->color('warning')
+                    ->modalCancelAction(
+                        fn(Action $action) =>
+                        $action
+                            ->label('Batal')
+                            ->color('danger')
+                    )
+
 
                     ->form(fn($record) => [
+                        Grid::make(2)->schema([
+                            TextInput::make('metode_pembayaran')
+                                ->label('Metode Pembayaran')
+                                ->default($record->verifikasiPengembalian?->metode_pembayaran?->label() ?? '-')
+                                ->disabled(),
 
-                        Grid::make(2)
-                            ->schema([
-                                Textinput::make('metode_pembayaran')
-                                    ->label('Metode Pembayaran')
-                                    ->default($record->verifikasiPengembalian?->metode_pembayaran)
-                                    ->formatStateUsing(
-                                        fn($state) =>
-                                        $state ? MethodePembayaran::from($state)->label() : '-'
-                                    )
-                                    ->disabled(),
-                                TextInput::make('nama_bank')
-                                    ->label('Nama Bank')
-                                    ->default(
-                                        $record->verifikasiPengembalian?->nama_bank
-                                            ? OpsiBank::from($record->verifikasiPengembalian?->nama_bank)->label()
-                                            : '-'
-                                    )
-                                    ->visible(
-                                        fn() =>
-                                        $record->verifikasiPengembalian?->metode_pembayaran === MethodePembayaran::TRANSFER->value
-                                    )
-                                    ->disabled(),
+                            TextInput::make('nama_bank')
+                                ->label('Nama Bank')
+                                ->default(
+                                    $record->verifikasiPengembalian?->nama_bank
+                                        ? OpsiBank::from($record->verifikasiPengembalian->nama_bank)->label()
+                                        : '-'
+                                )
+                                ->disabled(),
+                        ]),
 
-                            ]),
+                        Grid::make(2)->schema([
+                            TextInput::make('total_bayar')
+                                ->label('Total Bayar')
+                                ->default($record->verifikasiPengembalian?->total_bayar)
+                                ->disabled(),
 
-                        Grid::make(2)
-                            ->schema([
-                                TextInput::make('total_bayar')
-                                    ->label('Total Bayar')
-                                    ->default($record->verifikasiPengembalian?->total_bayar)
-                                    ->disabled(),
-
-                                TextInput::make('nama_ewallet')
-                                    ->label('Nama E-Wallet')
-                                    ->default(
-                                        $record->verifikasiPengembalian?->nama_ewallet
-                                            ? OpsiEwallet::from($record->verifikasiPengembalian?->nama_ewallet)->label()
-                                            : '-'
-                                    )
-                                    ->visible(fn($get) => $get('metode_pembayaran') === 'ewallet')
-                                    ->disabled(),
-                            ]),
+                            TextInput::make('nama_ewallet')
+                                ->label('Nama E-Wallet')
+                                ->default(
+                                    $record->verifikasiPengembalian?->nama_ewallet
+                                        ? OpsiEwallet::from($record->verifikasiPengembalian->nama_ewallet)->label()
+                                        : '-'
+                                )
+                                ->disabled(),
+                        ]),
 
                         FileUpload::make('path_bukti_pembayaran')
                             ->label('Bukti Pembayaran')
@@ -136,28 +130,18 @@ class DataPengembaliansTable
                             ->image()
                             ->openable()
                             ->downloadable()
-                            ->previewable()
-                            ->deletable(false)
                             ->disabled()
                             ->default(fn($record) => $record->verifikasiPengembalian?->path_bukti_pembayaran),
-
-                        Textarea::make('catatan')
-                            ->label('Catatan Petugas')
-                            ->default($record->verifikasiPengembalian?->catatan)
-                            ->disabled(),
-
                     ])
 
-                    ->action(function (array $data, $record) {
-                        DB::transaction(function () use ($data, $record) {
-
+                    ->action(function ($record) {
+                        DB::transaction(function () use ($record) {
                             $verifikasi = VerifikasiPengembalian::where('peminjaman_id', $record->id)
                                 ->lockForUpdate()
                                 ->firstOrFail();
 
                             $verifikasi->update([
                                 'terverifikasi' => true,
-                                'catatan' => $data['catatan'] ?? null,
                                 'updated_by' => Auth::id(),
                             ]);
 
@@ -165,12 +149,68 @@ class DataPengembaliansTable
                                 'status' => StatusPeminjaman::DIKEMBALIKAN,
                                 'updated_by' => Auth::id(),
                             ]);
+
+                            Notification::make()
+                                ->title('Berhasil diverifikasi')
+                                ->success()
+                                ->send();
+
+                            Notification::make()
+                                ->title('Pengembalian diverifikasi')
+                                ->success()
+                                ->body('Pengembalian barang kamu telah diverifikasi.')
+                                ->sendToDatabase($record->peminjam);
                         });
                     })
 
-                    ->successNotificationTitle('Pengembalian berhasil diverifikasi')
-                    ->failureNotificationTitle('Gagal memverifikasi pengembalian')
-                    ->requiresConfirmation(),
+                    ->extraModalFooterActions([
+                        Action::make('tolak_verifikasi')
+                            ->label('Tolak Verifikasi')
+                            ->color('warning')
+                            ->modalHeading('Tolak Verifikasi')
+                            ->modalSubmitAction(
+                                fn(Action $action) =>
+                                $action
+                                    ->label('Tolak')
+                                    ->color('danger')
+                            )
+
+                            ->requiresConfirmation()
+                            ->color('warning')
+                            ->form([
+                                Textarea::make('alasan_penolakan')
+                                    ->label('Alasan Penolakan')
+                                    ->required(),
+                            ])
+                            ->action(function (array $data, $record) {
+                                DB::transaction(function () use ($data, $record) {
+                                    $verifikasi = VerifikasiPengembalian::where('peminjaman_id', $record->id)
+                                        ->lockForUpdate()
+                                        ->firstOrFail();
+
+                                    $verifikasi->update([
+                                        'terverifikasi' => false,
+                                        'updated_by' => Auth::id(),
+                                    ]);
+
+                                    $record->update([
+                                        'status' => StatusPeminjaman::VERIFIKASI_DITOLAK,
+                                        'updated_by' => Auth::id(),
+                                    ]);
+
+                                    Notification::make()
+                                        ->title('Verifikasi ditolak')
+                                        ->danger()
+                                        ->send();
+
+                                    Notification::make()
+                                        ->title('Pengembalian ditolak')
+                                        ->danger()
+                                        ->body('Pengembalian barang ditolak: ' . $data['alasan_penolakan'])
+                                        ->sendToDatabase($record->peminjam);
+                                });
+                            }),
+                    ]),
             ])
 
             ->defaultSort('created_at', 'desc')

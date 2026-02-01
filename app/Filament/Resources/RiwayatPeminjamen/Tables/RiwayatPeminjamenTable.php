@@ -8,6 +8,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -55,7 +56,15 @@ class RiwayatPeminjamenTable
                     ->searchable(),
             ])
             ->filters([
-                TrashedFilter::make(),
-            ]);
+                SelectFilter::make('status')
+                    ->label('Status Peminjaman')
+                    ->options(
+                        collect(StatusPeminjaman::inactive())
+                            ->mapWithKeys(fn(StatusPeminjaman $case) => [
+                                $case->value => $case->label(),
+                            ])
+                            ->toArray()
+                    )
+            ])->striped();
     }
 }

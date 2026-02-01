@@ -15,10 +15,18 @@ class VerifikasiPengembalian extends Model
         'nama_bank',
         'nama_ewallet',
         'total_bayar',
-        'catatan'
+        'catatan',
+        'created_by',
+        'updated_by',
+        'deleted_by'
     ];
 
     protected $casts = [
-        'methode_pembayaran' => MethodePembayaran::class
+        'metode_pembayaran' => MethodePembayaran::class
     ];
+
+        public function peminjaman()
+    {
+        return $this->belongsTo(PeminjamanBarang::class, 'peminjaman_id');
+    }
 }
