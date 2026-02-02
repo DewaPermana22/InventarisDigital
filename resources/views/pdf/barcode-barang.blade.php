@@ -6,6 +6,8 @@
             }
 
             .barcode-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
                 page-break-inside: avoid;
             }
         }
@@ -16,8 +18,8 @@
         }
 
         .barcode-cell {
-            width: 50%;
-            padding: 12px;
+            width: 25%;
+            padding: 8px;
             border: 1px solid #e5e7eb;
             text-align: center;
             vertical-align: top;
@@ -48,7 +50,7 @@
 
     @if(count($barcodes) > 0)
     <table class="barcode-table">
-        @foreach(array_chunk($barcodes, 2) as $chunk)
+        @foreach(array_chunk($barcodes, 4) as $chunk)
         <tr>
             @foreach($chunk as $barcode)
             <td class="barcode-cell">
@@ -63,14 +65,13 @@
 
                 <div class="barcode-info">
                     {{ $barcode['name'] }}<br>
-                    {{ $barcode['category'] }}
                 </div>
             </td>
             @endforeach
 
-            @if(count($chunk) == 1)
-            <td class="barcode-cell"></td>
-            @endif
+            @for($i = count($chunk); $i < 4; $i++)
+                <td class="barcode-cell" style="border: none;"></td>
+            @endfor
         </tr>
         @endforeach
     </table>

@@ -16,10 +16,7 @@ Route::get('/kartu/download', [GenerateKartuPeminjam::class, 'download'])
     ->name('kartu.download');
 
 Route::prefix('barcode')->name('barcode.')->group(function () {
-    // Download PDF (mirip dengan download kartu)
     Route::get('/download', [GenerateBarcodeBarang::class, 'download'])->name('download');
-    // Download single barcode sebagai PNG
-    Route::get('/download-image/{kodeBarang}', [GenerateBarcodeBarang::class, 'downloadImage'])->name('download-image');
 });
 
 Route::prefix('export')->name('export.')->group(function (){

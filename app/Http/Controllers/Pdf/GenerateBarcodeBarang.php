@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Service\BarcodeBarangService;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Response;
 
 class GenerateBarcodeBarang extends Controller
 {
@@ -35,24 +34,5 @@ class GenerateBarcodeBarang extends Controller
             ->setOption('print-media-type', true)
             ->setOption('no-background', false)
             ->download('barcode-barang-' . now()->format('Ymd_His') . '.pdf');
-    }
-
-    /**
-     * Download single barcode sebagai PNG
-     */
-    public function downloadImage($kodeBarang)
-    {
-        try {
-            $result = app(BarcodeBarangService::class)->GenerateSingleBarcode($kodeBarang, false);
-
-            $image = base64_decode($result['barcode_base64']);
-
-            return Response::make($image, 200, [
-                'Content-Type' => 'image/png',
-                'Content-Disposition' => 'attachment; filename="barcode-' . $kodeBarang . '.png"'
-            ]);
-        } catch (\Exception $e) {
-            abort(404, $e->getMessage());
-        }
     }
 }

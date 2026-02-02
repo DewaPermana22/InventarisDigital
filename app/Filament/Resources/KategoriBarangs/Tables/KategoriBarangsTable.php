@@ -40,9 +40,6 @@ class KategoriBarangsTable
                     ->dateTime('d M Y H:i')
                     ->sortable(),
             ])
-            ->filters([
-                TrashedFilter::make(),
-            ])
             ->recordActions([
                 EditAction::make(),
             ])
@@ -52,6 +49,8 @@ class KategoriBarangsTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->striped();
     }
 }

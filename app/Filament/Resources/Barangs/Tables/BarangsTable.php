@@ -117,12 +117,6 @@ class BarangsTable
                 ActionGroup::make([
                     EditAction::make()->color('warning'),
                     ViewAction::make()->color(Color::Indigo),
-                    Action::make('download_image')
-                        ->label('Download Barcode')
-                        ->icon('heroicon-o-arrow-down-tray')
-                        ->color('info')
-                        ->url(fn(Barang $record) => route('barcode.download-image', $record->kode_barang))
-                        ->openUrlInNewTab(),
                 ])
             ])
             ->toolbarActions([

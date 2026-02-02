@@ -164,24 +164,25 @@ class PeminjamanBarangsTable
                             return;
                         }
 
-                        $record->update([
-                            'status' => StatusPeminjaman::DIKEMBALIKAN,
-                            'tanggal_dikembalikan' => now(),
-                        ]);
+                        DB::transaction(function () use ($record) {
+                            $record->update([
+                                'status' => StatusPeminjaman::MENUNGGU_PERSETUJUAN,
+                                'updated_by' => Auth::id()
+                            ]);
+                        });
 
                         Notification::make()
-                            ->title('Barang berhasil dikembalikan')
-                            ->body('Silakan cek detail peminjaman')
+                            ->title('Barang berhasil discan')
+                            ->body('Pengembalian Anda masih menunggu persetujuan dari Petugas')
                             ->success()
                             ->sendToDatabase(Auth::user());
 
                         // Toast (popup)
                         Notification::make()
-                            ->title('Barang berhasil dikembalikan')
+                            ->title('Barang berhasil discan')
                             ->success()
                             ->send();
 
-                        $livewire->dispatch('close-modal');
                     }),
 
                 // Kembalikan Barang (Terlambat)

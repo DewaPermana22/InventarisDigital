@@ -74,6 +74,8 @@ class PeminjamanBarangSuperAdminsTable
                     ->color(fn(StatusPeminjaman $state) => $state->color())
                     ->formatStateUsing(fn(StatusPeminjaman $state) => $state->label())
                     ->searchable(),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->striped();;
     }
 }
