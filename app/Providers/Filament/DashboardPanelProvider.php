@@ -34,7 +34,6 @@ class DashboardPanelProvider extends PanelProvider
         FilamentAsset::register([
             Js::make('html5-qrcode', 'https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js'),
             Js::make('barcode-scanner', asset('js/scanner.js')),
-            Js::make('nprogress', asset('js/nprogress.js'))
         ]);
     }
     public function panel(Panel $panel): Panel
@@ -44,7 +43,6 @@ class DashboardPanelProvider extends PanelProvider
             ->id('dashboard')
             ->path('dashboard')
             ->login()
-            ->emailVerification()
             ->colors([
                 'primary' => Color::Indigo,
             ])

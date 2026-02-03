@@ -9,6 +9,7 @@
 @include('landing.sections.features')
 @include('landing.sections.steps')
 @include('landing.sections.targets')
+@include('landing.sections.pricings')
 @include('landing.sections.cta')
 @endsection
 

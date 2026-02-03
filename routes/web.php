@@ -10,7 +10,6 @@ Route::get('/', [LandingPageController::class, 'index'])->name('home');
 Route::get('/scan', [LandingPageController::class, 'scan'])->name('scan');
 
 Route::get('/card', [LandingPageController::class, 'card'])->name('card');
-Route::get('/pricing', [LandingPageController::class, 'pricing'])->name('pricing');
 
 Route::get('/kartu/download', [GenerateKartuPeminjam::class, 'download'])
     ->name('kartu.download');
