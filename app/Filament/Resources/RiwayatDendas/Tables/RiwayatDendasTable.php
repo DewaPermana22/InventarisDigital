@@ -2,13 +2,9 @@
 
 namespace App\Filament\Resources\RiwayatDendas\Tables;
 
-use App\Enums\MethodePembayaran;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Schemas\Components\Grid;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\TextColumn;
@@ -22,6 +18,8 @@ class RiwayatDendasTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->emptyStateHeading('Belum Ada Riwayat Denda')
+            ->emptyStateDescription('Anda belum memiliki catatan denda keterlambatan pengembalian barang.')
             ->recordUrl(null)
             ->columns([
                 TextColumn::make('barang.kode_barang')
@@ -58,9 +56,26 @@ class RiwayatDendasTable
                     ->formatStateUsing(fn($state) => $state ? 'Terverifikasi' : 'Belum')
                     ->color(fn($state) => $state ? 'success' : 'warning'),
 
-                TextColumn::make('verifikasiPengembalian.created_at')
+                TextColumn::make('verifikasiPengembalian.updated_at')
                     ->label('Tanggal Denda')
                     ->date('d/m/Y'),
+            ])
+            ->filters([
+                SelectFilter::make('status_verifikasi')
+                    ->label('Status Verifikasi')
+                    ->options([
+                        '0' => 'Belum Terverifikasi',
+                        '1' => 'Terverifikasi',
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (! isset($data['value'])) {
+                            return;
+                        }
+
+                        $query->whereHas('verifikasiPengembalian', function ($q) use ($data) {
+                            $q->where('terverifikasi', $data['value']);
+                        });
+                    }),
             ])
             ->recordActions([
                 ViewAction::make('detail')
@@ -126,6 +141,7 @@ class RiwayatDendasTable
                             ->url(fn($state) => $state ? Storage::url($state) : null)
                             ->openUrlInNewTab(),
                     ])
-            ])->striped();
+            ])->striped()
+            ->defaultSort('created_at', 'desc');
     }
 }

@@ -3,7 +3,7 @@
 
         <div class="text-center mb-16 md:mb-20">
             <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
-                Satu Sistem untuk <span class="text-indigo-600">Semua Sektor</span>
+                Satu Sistem untuk <span class="text-indigo-500">Semua Sektor</span>
             </h2>
             <p class="text-slate-500 max-w-2xl mx-auto text-base md:text-lg font-medium leading-relaxed">
                 Fleksibilitas InventarisDigital memungkinkan manajemen aset yang presisi, apa pun jenis industrinya.

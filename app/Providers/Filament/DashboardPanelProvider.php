@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Login;
 use App\Filament\Widgets\BarangStats;
 use App\Filament\Widgets\DashboardStats;
 use App\Filament\Widgets\GrafikPeminjaman;
@@ -46,12 +47,25 @@ class DashboardPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Indigo,
             ])
+            ->loginRouteSlug('login')
+            ->spa()
+            ->profile()
+            ->topNavigation()
             ->databaseNotifications()
             ->font('Nunito')
             ->authGuard('web')
             ->brandLogo(asset('logo/inventarisdg_light.svg'))
             ->darkModeBrandLogo(asset('logo/inventarisdg_dark.svg'))
             ->brandLogoHeight('2.5rem')
+            ->registerErrorNotification(
+                title: 'An error occurred',
+                body: 'Please try again later.',
+            )
+            ->registerErrorNotification(
+                title: 'Record not found',
+                body: 'A record you are looking for does not exist.',
+                statusCode: 404,
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

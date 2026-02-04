@@ -12,9 +12,19 @@ class ExportDataPeminjaman extends Controller
 {
     public function export(Request $request)
     {
-        $periode = Carbon::createFromFormat('Y-m', $request->bulan);
-        $bulanTahun = $periode->format('F_Y');
-        $fileName = "Laporan_Peminjaman_{$bulanTahun}_InventarisDigital.xlsx";
-        return Excel::download(new RiwayatPeminjamanBarang($periode), $fileName);
+        $bulan = $request->get('bulan');
+        $tahun = $request->get('tahun', now()->year);
+
+        if ($bulan) {
+            $namaBulan = Carbon::create($tahun, $bulan)->locale('id')->translatedFormat('F_Y');
+            $fileName = "Riwayat_Peminjaman_{$namaBulan}_" . now()->format('Y-m-d') . ".xlsx";
+        } else {
+            $fileName = "Riwayat_Peminjaman_Semua_" . now()->format('Y-m-d') . ".xlsx";
+        }
+
+        return Excel::download(
+            new RiwayatPeminjamanBarang($bulan, $tahun),
+            $fileName
+        );
     }
 }

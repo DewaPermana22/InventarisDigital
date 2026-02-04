@@ -4,6 +4,11 @@
         scroll-behavior: smooth;
     }
 
+    html {
+        scroll-behavior: smooth;
+    }
+
+
     /* Background gradient yang menyatu dari hero hingga footer */
     .continuous-gradient {
         background: linear-gradient(180deg,

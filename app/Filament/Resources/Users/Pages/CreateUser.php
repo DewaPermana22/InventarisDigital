@@ -37,7 +37,7 @@ class CreateUser extends CreateRecord
     function getFormActions(): array
     {
         return [
-            $this->getCreateFormAction()->label('Simpan'),
+            $this->getCreateFormAction()->label('Simpan')->color('primary'),
             $this->getCancelFormAction()->label('Batal')->color('danger')
         ];
     }

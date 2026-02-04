@@ -10,9 +10,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\ViewField;
-use Filament\Forms\Get;
-use Filament\Schemas\Components\Utilities\Get as UtilitiesGet;
 
 class UserForm
 {
@@ -25,7 +22,6 @@ class UserForm
                     ->components([
                         FileUpload::make('profile_pict')
                             ->image()
-                            ->disk('public')
                             ->directory('profile_pict')
                             ->maxSize(2048)
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
@@ -74,10 +70,12 @@ class UserForm
                             ->default(true)
                             ->required(),
 
-                        // Info password (hanya tampil saat create)
                         Placeholder::make('password_info')
                             ->label('Password Default')
-                            ->content(fn(UtilitiesGet $get) => 'Password otomatis: ' . ($get('role') ?? 'user') . '-12345')
+                            ->content(function ($get) {
+                                $role = $get('role') ?? HakAkses::USER->value;
+                                return '🔑 Password otomatis: ' . $role . '-12345';
+                            })
                             ->visibleOn('create'),
                     ])
             ]);

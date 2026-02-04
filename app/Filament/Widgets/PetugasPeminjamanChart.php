@@ -47,6 +47,7 @@ class PetugasPeminjamanChart extends ChartWidget
                 [
                     'label' => 'Peminjaman Disetujui',
                     'data' => $values,
+                    'fill' => true,
                     'borderColor' => '#6366F1',
                     'backgroundColor' => 'rgba(99, 102, 241, 0.3)',
                     'tension' => 0.4,

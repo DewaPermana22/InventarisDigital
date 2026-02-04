@@ -73,9 +73,4 @@ class GrafikRuangan extends ChartWidget
     {
         return 'doughnut';
     }
-
-    protected function getMaxHeight(): ?string
-    {
-        return '210px';
-    }
 }

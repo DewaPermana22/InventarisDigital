@@ -10,9 +10,13 @@
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05) !important;
 }
 
+.filament-progress-bar {
+  background-color: rgb(var(--filament-primary-600)) !important;
+}
+
 /* Dark Mode */
 .dark .fi-sidebar {
-    background-color: oklch(0.21 0.006 285.885) !important;
-    border-right: 1px solid oklch(0.28 0.012 285.885) !important; /* Sedikit lebih terang dari bg */
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3) !important; /* Shadow lebih gelap untuk dark mode */
+  background-color: oklch(0.21 0.006 285.885) !important;
+  border-right: 1px solid oklch(0.28 0.012 285.885) !important; /* Sedikit lebih terang dari bg */
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3) !important; /* Shadow lebih gelap untuk dark mode */
 }

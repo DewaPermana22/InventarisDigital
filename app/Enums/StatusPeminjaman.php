@@ -24,7 +24,7 @@ enum StatusPeminjaman: string
             self::DIKEMBALIKAN => 'Dikembalikan',
             self::TERLAMBAT => 'Terlambat',
             self::MENUNGGU_VERIFIKASI => 'Menunggu Verifikasi',
-            self::MENUNGGU_PERSETUJUAN => 'Menunggu Verifikasi',
+            self::MENUNGGU_PERSETUJUAN => 'Menunggu (Pengembalian)',
             self::VERIFIKASI_DITOLAK => 'Verifikasi Ditolak',
         };
     }

@@ -13,7 +13,7 @@
         </h1>
 
         <p class="text-base md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed px-2">
-            <strong>InventarisDigital</strong> adalah platform all-in-one untuk melacak, mengelola, dan membuat laporan setiap aset inventaris Anda secara real-time, akurat, dan transparan.
+            <strong>InventarisDigital</strong> adalah platform all-in-one untuk melacak, mengelola, dan membuat laporan setiap aset inventaris Anda secara akurat dan transparan.
         </p>
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 px-4 sm:px-0">

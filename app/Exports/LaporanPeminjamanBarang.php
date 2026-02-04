@@ -5,7 +5,6 @@ namespace App\Exports;
 use App\Enums\StatusPeminjaman;
 use App\Models\PeminjamanBarang;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
@@ -14,13 +13,15 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
-class RiwayatPeminjamanBarang implements FromView, WithEvents
+class LaporanPeminjamanBarang implements FromView, WithEvents
 {
+    protected $filterType; // 'bulan' atau 'tahun'
     protected $bulan;
     protected $tahun;
 
-    public function __construct($bulan = null, $tahun = null)
+    public function __construct($filterType = 'tahun', $bulan = null, $tahun = null)
     {
+        $this->filterType = $filterType;
         $this->bulan = $bulan;
         $this->tahun = $tahun ?? now()->year;
     }
@@ -28,24 +29,26 @@ class RiwayatPeminjamanBarang implements FromView, WithEvents
     public function view(): View
     {
         $query = PeminjamanBarang::with(['peminjam', 'barang', 'petugas'])
-            ->where('peminjam_id', Auth::user()?->id);
+            ->where('status', StatusPeminjaman::DIKEMBALIKAN);
 
-        if ($this->bulan) {
-            $query->whereYear('tanggal_pinjam', $this->tahun)
-                ->whereMonth('tanggal_pinjam', $this->bulan);
+        if ($this->filterType === 'bulan' && $this->bulan) {
+            $query->whereYear('tanggal_kembali', $this->tahun)
+                ->whereMonth('tanggal_kembali', $this->bulan);
+        } else {
+            $query->whereYear('tanggal_kembali', $this->tahun);
         }
 
-        $peminjamans = $query->orderBy('tanggal_pinjam', 'desc')->get();
+        $peminjamans = $query->orderBy('tanggal_kembali', 'desc')->get();
 
         // Format periode
-        if ($this->bulan) {
+        if ($this->filterType === 'bulan' && $this->bulan) {
             $namaBulan = \Carbon\Carbon::create($this->tahun, $this->bulan)->locale('id')->translatedFormat('F Y');
             $periode = "Periode: {$namaBulan}";
         } else {
-            $periode = 'Semua Periode';
+            $periode = "Periode: Tahun {$this->tahun}";
         }
 
-        return view('exports.peminjaman', [
+        return view('exports.laporan-peminjaman', [
             'peminjamans' => $peminjamans,
             'periode' => $periode,
         ]);
@@ -56,9 +59,9 @@ class RiwayatPeminjamanBarang implements FromView, WithEvents
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 // Merge judul
-                $event->sheet->mergeCells('A1:I1');
-                $event->sheet->mergeCells('A2:I2');
-                $event->sheet->mergeCells('A3:I3');
+                $event->sheet->mergeCells('A1:H1');
+                $event->sheet->mergeCells('A2:H2');
+                $event->sheet->mergeCells('A3:H3');
 
                 // Center judul
                 foreach ([1, 2, 3] as $row) {
@@ -71,59 +74,21 @@ class RiwayatPeminjamanBarang implements FromView, WithEvents
                 $event->sheet->getStyle('A1:A3')->getFont()->setBold(true);
 
                 // Header tabel (baris ke-5)
-                $event->sheet->getStyle('A5:I5')->getFont()->setBold(true);
-                $event->sheet->getStyle('A5:I5')->getFill()
+                $event->sheet->getStyle('A5:H5')->getFont()->setBold(true);
+                $event->sheet->getStyle('A5:H5')->getFill()
                     ->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setARGB('FFFFFF00'); // Background kuning
 
                 // Center align untuk header
-                $event->sheet->getStyle('A5:I5')
+                $event->sheet->getStyle('A5:H5')
                     ->getAlignment()
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER)
                     ->setVertical(Alignment::VERTICAL_CENTER);
 
-                // Warna status (kolom H adalah Status)
                 $highestRow = $event->sheet->getHighestRow();
-                for ($row = 6; $row <= $highestRow; $row++) {
-                    $status = strtolower(trim($event->sheet->getCell("H{$row}")->getValue()));
-
-                    // Ubah text jadi UPPERCASE dan BOLD
-                    $event->sheet->setCellValue("H{$row}", strtoupper($status));
-                    $event->sheet->getStyle("H{$row}")->getFont()->setBold(true);
-
-                    // Set warna berdasarkan status
-                    switch ($status) {
-                        case StatusPeminjaman::DIKEMBALIKAN->value: // 'dikembalikan'
-                            $event->sheet->getStyle("H{$row}")
-                                ->getFont()->getColor()->setARGB('FF008000'); // hijau
-                            break;
-
-                        case StatusPeminjaman::DITOLAK->value: // 'ditolak'
-                        case StatusPeminjaman::TERLAMBAT->value: // 'terlambat'
-                            $event->sheet->getStyle("H{$row}")
-                                ->getFont()->getColor()->setARGB('FFFF0000'); // merah
-                            break;
-
-                        case StatusPeminjaman::DIBATALKAN->value: // 'dibatalkan'
-                            $event->sheet->getStyle("H{$row}")
-                                ->getFont()->getColor()->setARGB('FFFF8C00'); // orange
-                            break;
-
-                        case 'disetujui':
-                            $event->sheet->getStyle("H{$row}")
-                                ->getFont()->getColor()->setARGB('FF0000FF'); // biru
-                            break;
-
-                        case 'menunggu':
-                        case 'pending':
-                            $event->sheet->getStyle("H{$row}")
-                                ->getFont()->getColor()->setARGB('FFFFA500'); // kuning/orange
-                            break;
-                    }
-                }
 
                 // BORDER untuk semua tabel (dari header sampai data terakhir)
-                $event->sheet->getStyle("A5:I{$highestRow}")->applyFromArray([
+                $event->sheet->getStyle("A5:H{$highestRow}")->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_THIN,
@@ -133,7 +98,7 @@ class RiwayatPeminjamanBarang implements FromView, WithEvents
                 ]);
 
                 // Auto width kolom
-                foreach (range('A', 'I') as $col) {
+                foreach (range('A', 'H') as $col) {
                     $event->sheet->getColumnDimension($col)->setAutoSize(true);
                 }
 
@@ -153,10 +118,10 @@ class RiwayatPeminjamanBarang implements FromView, WithEvents
                 // Tinggi row footer untuk logo
                 $event->sheet->getRowDimension($footerRow)->setRowHeight(35);
 
-                // Text footer di sebelah kanan (hanya tanggal, tanpa waktu)
+                // Text footer di sebelah kanan
                 $footerTextRow = $footerRow;
-                $event->sheet->mergeCells("C{$footerTextRow}:I{$footerTextRow}");
-                $event->sheet->setCellValue("C{$footerTextRow}", 'Dibuat pada: ' . now()->format('d-m-Y'));
+                $event->sheet->mergeCells("C{$footerTextRow}:H{$footerTextRow}");
+                $event->sheet->setCellValue("C{$footerTextRow}", 'Dibuat pada: ' . now()->format('d-m-Y H:i'));
                 $event->sheet->getStyle("C{$footerTextRow}")
                     ->getAlignment()
                     ->setVertical(Alignment::VERTICAL_CENTER);

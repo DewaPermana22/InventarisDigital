@@ -1,13 +1,13 @@
 <table>
     <thead>
         <tr>
-            <th colspan="9" style="font-size: 16px; font-weight: bold;">RIWAYAT PEMINJAMAN BARANG</th>
+            <th colspan="8" style="font-size: 16px; font-weight: bold;">LAPORAN PEMINJAMAN BARANG</th>
         </tr>
         <tr>
-            <th colspan="9" style="font-size: 14px;">{{ $periode }}</th>
+            <th colspan="8" style="font-size: 14px;">{{ $periode }}</th>
         </tr>
         <tr>
-            <th colspan="9"></th>
+            <th colspan="8"></th>
         </tr>
         <tr>
             <th></th>
@@ -18,9 +18,8 @@
             <th>Nama Barang</th>
             <th>Keperluan</th>
             <th>Tanggal Pinjam</th>
-            <th>Tanggal Disetujui</th>
             <th>Tanggal Kembali</th>
-            <th>Status</th>
+            <th>Lama Pinjam (Hari)</th>
             <th>Petugas</th>
         </tr>
     </thead>
@@ -31,10 +30,9 @@
             <td>{{ $peminjaman->peminjam?->name ?? '-' }}</td>
             <td>{{ $peminjaman->barang?->name ?? '-' }}</td>
             <td>{{ $peminjaman->keperluan ?? '-' }}</td>
-            <td>{{ $peminjaman->tanggal_pinjam ? $peminjaman->tanggal_pinjam->format('d-m-Y') : '-' }}</td>
-            <td>{{ $peminjaman->tanggal_disetujui ? $peminjaman->tanggal_disetujui->format('d-m-Y') : '-' }}</td>
-            <td>{{ $peminjaman->tanggal_kembali ? $peminjaman->tanggal_kembali->format('d-m-Y') : '-' }}</td>
-            <td>{{ $peminjaman->status->value }}</td>
+            <td>{{ $peminjaman->tanggal_pinjam?->format('d-m-Y') ?? '-' }}</td>
+            <td>{{ $peminjaman->tanggal_kembali?->format('d-m-Y') ?? '-' }}</td>
+            <td>{{ $peminjaman->tanggal_pinjam && $peminjaman->tanggal_kembali ? $peminjaman->tanggal_pinjam->diffInDays($peminjaman->tanggal_kembali) : '-' }}</td>
             <td>{{ $peminjaman->petugas?->name ?? '-' }}</td>
         </tr>
         @endforeach

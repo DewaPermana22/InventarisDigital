@@ -18,8 +18,8 @@ class RiwayatPeminjamenTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->emptyStateHeading('Belum Ada Riwayat Denda')
-            ->emptyStateDescription('Anda belum memiliki catatan denda keterlambatan pengembalian barang.')
+            ->emptyStateHeading('Riwayat masih kosong')
+            ->emptyStateDescription('Anda belum memiliki catatan peminjaman barang.')
             ->columns([
                 TextColumn::make('barang.kode_barang')
                     ->label('Kode Barang')
@@ -65,6 +65,7 @@ class RiwayatPeminjamenTable
                             ])
                             ->toArray()
                     )
-            ])->striped();
+            ])->striped()
+            ->defaultSort('created_at', 'desc');
     }
 }

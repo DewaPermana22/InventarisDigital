@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\DataPengembalians\Schemas;
+namespace App\Filament\Resources\VerifikasiDendas\Schemas;
 
 use Filament\Schemas\Schema;
 
-class DataPengembalianInfolist
+class VerifikasiDendaForm
 {
     public static function configure(Schema $schema): Schema
     {

@@ -8,7 +8,6 @@ use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
@@ -25,15 +24,20 @@ class UsersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->emptyStateHeading('Data akun masih kosong')
+            ->emptyStateDescription('Tambahkan akun untuk mulai menggunakan sistem.')
             ->columns([
                 ImageColumn::make('profile_pict')
                     ->circular()
+                    ->extraImgAttributes([
+                        'alt' => 'Logo',
+                        'loading' => 'lazy'
+                    ])
                     ->label('Foto')
-                    ->disk('public')
                     ->getStateUsing(function ($record) {
-                        return $record->profile_pict ?? 'storage/profile_pict/default_pp.jpg';
+                        return $record->profile_pict ?? 'images/default_pp.jpg';
                     })
-                    ->defaultImageUrl(asset('storage/profile_pict/default_pp.jpg')),
+                    ->defaultImageUrl(asset('images/default_pp.jpg')),
 
                 TextColumn::make('name')
                     ->searchable()

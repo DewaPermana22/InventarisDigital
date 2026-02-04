@@ -38,14 +38,14 @@ return [
             'report' => false,
         ],
 
+        // Shared Hosting configuration denied access terminal
         'public' => [
             'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL'), '/').'/storage',
+            'root' => public_path('uploads'),
+            'url' => env('APP_URL') . '/uploads',
             'visibility' => 'public',
-            'throw' => false,
-            'report' => false,
         ],
+
 
         's3' => [
             'driver' => 's3',

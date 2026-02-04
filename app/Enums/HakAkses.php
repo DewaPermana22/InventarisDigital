@@ -14,7 +14,7 @@ enum HakAkses: string
     {
         return match ($this) {
             self::SUPERADMIN => 'Superadmin',
-            self::ADMIN => 'Petugas',
+            self::ADMIN => 'Admin',
             self::USER => 'User'
         };
     }

@@ -17,7 +17,7 @@ class CheckUserActive
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('filament.dashboard.auth.login')
+            return redirect()->to(filament()->getLoginUrl())
                 ->with('error', 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.');
         }
 

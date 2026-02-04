@@ -6,10 +6,11 @@ use App\Filament\Resources\RiwayatPeminjamen\RiwayatPeminjamanResource;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Support\Colors\Color;
-use Filament\Support\Icons\Heroicon;
+use Carbon\Carbon;
+use Filament\Forms\Components\Select;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
+use Filament\Support\Icons\Heroicon;
 
 class ListRiwayatPeminjamen extends ListRecords
 {
@@ -22,39 +23,70 @@ class ListRiwayatPeminjamen extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('export-laporan-bulanan')
-                ->label("Export Laporan")
-                ->color(Color::Indigo)
+            Action::make('export-riwayat')
+                ->label("Export Riwayat")
+                ->color('primary')
                 ->icon(Heroicon::OutlinedPrinter)
                 ->requiresConfirmation()
-                ->modalHeading('Export Laporan Peminjaman')
+                ->modalHeading('Export Riwayat Peminjaman')
                 ->modalIcon(Heroicon::Printer)
-                ->modalDescription('Apakah Anda yakin ingin mengexport laporan peminjaman bulan ini?')
+                ->modalDescription('Pilih periode riwayat peminjaman yang ingin diexport')
+                ->form([
+                    Select::make('bulan')
+                        ->label('Filter Bulan (Opsional)')
+                        ->options(function () {
+                            $bulanSekarang = now()->month;
+                            $options = ['' => 'Semua Bulan'];
+
+                            for ($i = 1; $i <= $bulanSekarang; $i++) {
+                                $options[$i] = Carbon::create(null, $i)->locale('id')->translatedFormat('F');
+                            }
+
+                            return $options;
+                        })
+                        ->default('')
+                        ->native(false)
+                        ->placeholder('Pilih bulan (opsional)'),
+                ])
                 ->modalSubmitActionLabel('Ya, Export')
-                ->action(function () {
+                ->action(function (array $data) {
+                    $bulan = $data['bulan'] ?? null;
+                    $tahun = now()->year;
+
                     // Notifikasi langsung (popup)
                     Notification::make()
                         ->success()
                         ->title('Export Berhasil')
-                        ->body('File laporan sedang diunduh.')
+                        ->body('File riwayat peminjaman sedang diunduh.')
                         ->duration(3000)
                         ->send();
 
                     // Notifikasi ke database
+                    $periodeText = $bulan
+                        ? Carbon::create($tahun, $bulan)->locale('id')->translatedFormat('F Y')
+                        : "Semua Periode";
+
                     Notification::make()
                         ->success()
-                        ->title('Laporan Peminjaman Diexport')
-                        ->body('Anda telah mengexport laporan peminjaman bulan ' . now()->locale('id')->isoFormat('MMMM YYYY'))
-                        ->icon(Heroicon::DocumentText)
+                        ->title('Riwayat Peminjaman berhasil di export')
+                        ->body("Anda telah mengexport Riwayat Peminjaman ({$periodeText}) pada " . now()->format('d-m-Y'))
+                        ->icon('heroicon-o-document-text')
                         ->actions([
                             Action::make('view')
                                 ->button()
-                                ->url(route('export.peminjaman', ['bulan' => now()->format('Y-m')]))
+                                ->label('Download Lagi')
+                                ->url(route('export.riwayat-peminjaman', [
+                                    'bulan' => $bulan,
+                                    'tahun' => $tahun
+                                ]))
                                 ->openUrlInNewTab(),
                         ])
                         ->sendToDatabase(Auth::user());
 
-                    return redirect()->route('export.peminjaman', ['bulan' => now()->format('Y-m')]);
+                    return redirect()->route('export.riwayat-peminjaman', [
+                        'bulan' => $bulan,
+                        'tahun' => $tahun
+                    ]);
                 })
         ];
     }

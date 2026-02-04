@@ -12,7 +12,7 @@
                     </div>
                     <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 leading-[1.15] text-slate-900">
                         Solusi Digital Terbaik untuk <br class="hidden md:block">
-                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">Efisiensi Inventaris Anda</span>
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-violet-500">Efisiensi Inventaris Anda</span>
                     </h2>
                     <p class="text-base md:text-lg text-slate-600 mb-10 leading-relaxed max-w-xl lg:mx-0 mx-auto">
                         <strong>InventarisDigital</strong> hadir untuk mengubah cara kerja manual Anda menjadi sistem cerdas yang serba otomatis dan terintegrasi.
@@ -29,7 +29,7 @@
                     @endphp
                     @foreach($benefits as $benefit)
                     <li class="flex items-start gap-4 group">
-                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center group-hover:bg-indigo-600 transition-colors duration-300">
+                        <div class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center group-hover:bg-indigo-500 transition-colors duration-300">
                             <i data-lucide="check" class="text-indigo-600 w-4 h-4 group-hover:text-white transition-colors"></i>
                         </div>
                         <span class="text-sm md:text-base text-slate-700 leading-snug">

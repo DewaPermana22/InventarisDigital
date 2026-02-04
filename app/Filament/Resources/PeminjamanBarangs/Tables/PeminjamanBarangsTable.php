@@ -19,7 +19,6 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
@@ -27,6 +26,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Enums\HakAkses;
+use Filament\Tables\Filters\SelectFilter;
 
 class PeminjamanBarangsTable
 {
@@ -76,11 +76,18 @@ class PeminjamanBarangsTable
                     ->formatStateUsing(fn(StatusPeminjaman $state) => $state->label())
                     ->searchable(),
             ])
-
             ->filters([
-                TrashedFilter::make(),
+                SelectFilter::make('status')
+                    ->label('Status Peminjaman')
+                    ->options(
+                        collect(StatusPeminjaman::active())
+                            ->mapWithKeys(fn($case) => [
+                                $case->value => $case->label()
+                            ])
+                            ->toArray()
+                    )
+                    ->native(false)
             ])
-
             ->recordActions([
                 // Batalkan (Belum Di setujui)
                 Action::make('batalkan')
@@ -126,65 +133,6 @@ class PeminjamanBarangsTable
                             ->sendToDatabase($petugas);
                     }),
 
-                // Kembalikan (Sudah Dipinjam)
-                Action::make('scan_barcode')
-                    ->label('Kembalikan')
-                    ->icon(Heroicon::Camera)
-                    ->color('success')
-                    ->button()
-                    ->requiresConfirmation()
-                    ->visible(fn($record) => $record->status === StatusPeminjaman::DIPINJAM)
-                    ->modalHeading('Scan Barcode Barang')
-                    ->modalDescription('Arahkan kamera ke barcode barang')
-                    ->mountUsing(fn($livewire) => $livewire->barcode = null)
-                    ->modalContent(view('scanner.barcode'))
-                    ->closeModalByClickingAway(false)
-
-                    // Reset state setiap modal dibuka
-                    ->mountUsing(function ($livewire) {
-                        $livewire->barcode = null;
-                    })
-
-                    ->action(function ($record, $livewire) {
-                        $barcode = $livewire->barcode;
-                        if (blank($barcode)) {
-                            Notification::make()
-                                ->title('Barcode belum di-scan')
-                                ->warning()
-                                ->send();
-                            return;
-                        }
-
-                        if ($barcode !== $record->barang->kode_barang) {
-                            Notification::make()
-                                ->title('Barcode tidak sesuai')
-                                ->body("Barcode terbaca: {$barcode}")
-                                ->danger()
-                                ->send();
-                            return;
-                        }
-
-                        DB::transaction(function () use ($record) {
-                            $record->update([
-                                'status' => StatusPeminjaman::MENUNGGU_PERSETUJUAN,
-                                'updated_by' => Auth::id()
-                            ]);
-                        });
-
-                        Notification::make()
-                            ->title('Barang berhasil discan')
-                            ->body('Pengembalian Anda masih menunggu persetujuan dari Petugas')
-                            ->success()
-                            ->sendToDatabase(Auth::user());
-
-                        // Toast (popup)
-                        Notification::make()
-                            ->title('Barang berhasil discan')
-                            ->success()
-                            ->send();
-
-                    }),
-
                 // Kembalikan Barang (Terlambat)
                 Action::make('kembalikan_terlambat')
                     ->label('Kembalikan')
@@ -216,7 +164,6 @@ class PeminjamanBarangsTable
                         FileUpload::make('path_bukti_pembayaran')
                             ->label('Bukti Pembayaran')
                             ->image()
-                            ->disk('public')
                             ->directory('bukti_pembayaran')
                             ->required()
                             ->maxSize(2048)
@@ -289,6 +236,137 @@ class PeminjamanBarangsTable
                                 if ($petugas) {
                                     Notification::make()
                                         ->title('Pengembalian menunggu verifikasi')
+                                        ->body('Ada pengembalian dengan denda yang perlu diverifikasi.')
+                                        ->icon(Lucideicon::Clock)
+                                        ->sendToDatabase($petugas);
+                                }
+                            }
+
+                            return redirect()->route('filament.dashboard.resources.riwayat-dendas.index');
+                        } catch (\Throwable $e) {
+                            DB::rollBack();
+
+                            report($e);
+
+                            Notification::make()
+                                ->title('Gagal mengirim pengembalian')
+                                ->body('Terjadi kesalahan, silakan coba lagi.')
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+
+                // Verifikasi Ulang
+                Action::make('verifikasi_ulang')
+                    ->label('Verifikasi Ulang')
+                    ->button()
+                    ->color(Color::Red)
+                    ->icon(Heroicon::ExclamationCircle)
+                    ->visible(fn($record) => $record->status === StatusPeminjaman::VERIFIKASI_DITOLAK)
+                    ->requiresConfirmation()
+                    ->modalHeading('Kirim Ulang Bukti Pengembalian & Pembayaran')
+                    ->modalDescription(function ($record) {
+                        $hariTerlambat = Carbon::parse($record->tanggal_kembali)
+                            ->startOfDay()
+                            ->diffInDays(now()->startOfDay());
+
+                        $denda = $hariTerlambat * 5000;
+
+                        return new HtmlString(
+                            "Anda terlambat <strong>{$hariTerlambat} hari</strong>.<br> Total denda: <strong>Rp " . number_format($denda, 0, ',', '.') . "</strong>"
+                        );
+                    })
+
+                    ->form([
+                        Select::make('metode_pembayaran')
+                            ->label('Metode Pembayaran')
+                            ->options(MethodePembayaran::class)
+                            ->required()
+                            ->reactive(),
+
+                        FileUpload::make('path_bukti_pembayaran')
+                            ->label('Bukti Pembayaran')
+                            ->image()
+                            ->directory('bukti_pembayaran')
+                            ->required()
+                            ->maxSize(2048)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
+                            ->imagePreviewHeight('200'),
+
+                        Select::make('jenis_ewallet')
+                            ->label('Pilih E-Wallet')
+                            ->options(OpsiEwallet::options())
+                            ->visible(fn(Get $get) => $get('metode_pembayaran') === MethodePembayaran::EWALLET)
+                            ->required(fn(Get $get) => $get('metode_pembayaran') === MethodePembayaran::EWALLET)
+                            ->reactive(),
+
+                        Select::make('bank_tujuan')
+                            ->label('Pilih Bank')
+                            ->options(OpsiBank::options())
+                            ->visible(fn(Get $get) => $get('metode_pembayaran') === MethodePembayaran::TRANSFER)
+                            ->required(fn(Get $get) => $get('metode_pembayaran') === MethodePembayaran::TRANSFER)
+                            ->reactive(),
+
+                        TextInput::make('keterangan')
+                            ->label('Catatan (opsional)')
+                            ->placeholder('Contoh: bayar via QRIS BCA'),
+                    ])
+                    ->modalSubmitActionLabel('Kirim Ulang')
+                    ->action(function ($record, array $data) {
+                        DB::beginTransaction();
+
+                        try {
+                            $hariTerlambat = Carbon::parse($record->tanggal_kembali)
+                                ->startOfDay()
+                                ->diffInDays(now()->startOfDay());
+
+                            $totalBayar = $hariTerlambat * 5000;
+
+                            $verifikasi = VerifikasiPengembalian::where('peminjaman_id', $record->id)
+                                ->latest()
+                                ->first();
+
+                            if (! $verifikasi) {
+                                throw new \Exception('Data verifikasi sebelumnya tidak ditemukan.');
+                            }
+
+                            $record->update([
+                                'status' => StatusPeminjaman::MENUNGGU_VERIFIKASI,
+                                'updated_by' => $record->peminjam_id,
+                            ]);
+
+                            $verifikasi->update([
+                                'terverifikasi'          => false,
+                                'metode_pembayaran'     => $data['metode_pembayaran'],
+                                'path_bukti_pembayaran' => $data['path_bukti_pembayaran'],
+                                'nama_bank'             => $data['bank_tujuan'] ?? null,
+                                'nama_ewallet'          => $data['jenis_ewallet'] ?? null,
+                                'total_bayar'           => $totalBayar,
+                                'catatan'               => $data['keterangan'] ?? null,
+                                'updated_by'            => Auth::id(),
+                            ]);
+
+                            DB::commit();
+
+                            Notification::make()
+                                ->title('Pengembalian berhasil dikirim')
+                                ->body('Menunggu verifikasi petugas.')
+                                ->success()
+                                ->send();
+
+                            Notification::make()
+                                ->title('Pengembalian berhasil dikirim')
+                                ->body('Menunggu verifikasi petugas.')
+                                ->success()
+                                ->icon(Lucideicon::Clock)
+                                ->sendToDatabase(Auth::user());
+
+                            if ($record->petugas_id) {
+                                $petugas = User::find($record->petugas_id);
+                                if ($petugas) {
+                                    Notification::make()
+                                        ->title('Pengembalian menunggu verifikasi')
+                                        ->warning()
                                         ->body('Ada pengembalian dengan denda yang perlu diverifikasi.')
                                         ->icon(Lucideicon::Clock)
                                         ->sendToDatabase($petugas);

@@ -8,7 +8,7 @@
                 Pilihan Investasi Bisnis
             </div>
             <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
-                Paket Harga <span class="text-indigo-600">Terukur & Transparan</span>
+                Paket Harga <span class="text-indigo-500">Terukur & Transparan</span>
             </h2>
             <p class="text-slate-500 max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-medium">
                 Optimalkan manajemen stok barang Anda dengan biaya investasi yang sesuai dengan skala operasional perusahaan.
@@ -42,7 +42,7 @@
                     </li>
                 </ul>
 
-                <button class="w-full py-4 border-2 border-slate-200 rounded-2xl font-black text-sm text-slate-800 hover:border-indigo-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all duration-300 uppercase tracking-widest">
+                <button class="w-full py-4 bg-slate-900 rounded-2xl font-black text-sm text-white hover:bg-black hover:shadow-2xl transition-all duration-300 uppercase tracking-widest">
                     Pilih Startup
                 </button>
             </article>
@@ -76,7 +76,7 @@
                     </li>
                 </ul>
 
-                <button class="w-full py-4 bg-indigo-600 rounded-2xl font-black text-sm text-white hover:bg-indigo-700 hover:shadow-indigo-200 hover:shadow-2xl transition-all duration-300 uppercase tracking-widest shadow-lg shadow-indigo-100">
+                <button class="w-full py-4 bg-indigo-500 rounded-2xl font-black text-sm text-white hover:bg-indigo-700 hover:shadow-indigo-200 hover:shadow-2xl transition-all duration-300 uppercase tracking-widest shadow-lg shadow-indigo-100">
                     Pilih Instansi
                 </button>
             </article>

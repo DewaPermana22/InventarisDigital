@@ -91,25 +91,27 @@ class BarangForm
                                     ->label('Foto Barang')
                                     ->image()
                                     ->directory('barangs')
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
                                     ->maxSize(2048)
+                                    ->lazy()
                                     ->imageEditor()
                                     ->imageEditorAspectRatios([
                                         '1:1',
                                         '4:3',
                                         '16:9',
                                     ])
-                                    ->imagePreviewHeight('80')
+                                    ->imagePreviewHeight('200')
                                     ->panelLayout('integrated')
-                                    ->columnSpan(2),
+                                    ->imageResizeMode('cover'),
+
+                                Textarea::make('catatan')
+                                    ->label('Catatan Tambahan')
+                                    ->rows(3)
+                                    ->maxLength(500)
+                                    ->placeholder('Contoh: Barang baru, masih garansi sampai Desember 2024...')
+                                    ->helperText('Catatan opsional, maksimal 500 karakter')
+                                    ->columnSpan(1),
                             ])
-                            ->columnSpanFull(),
-                        Textarea::make('catatan')
-                            ->label('Catatan Tambahan')
-                            ->rows(3)
-                            ->maxLength(500)
-                            ->placeholder('Contoh: Barang baru, masih garansi sampai Desember 2024...')
-                            ->helperText('Catatan opsional, maksimal 500 karakter')
-                            ->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
             ]);
