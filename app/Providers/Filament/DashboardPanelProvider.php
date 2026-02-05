@@ -40,6 +40,10 @@ class DashboardPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->renderHook(
+                'panels::scripts.after',
+                fn() => view('pusher')
+            )
             ->default()
             ->id('dashboard')
             ->path('dashboard')
@@ -50,7 +54,7 @@ class DashboardPanelProvider extends PanelProvider
             ->loginRouteSlug('login')
             ->spa()
             ->profile()
-            ->topNavigation()
+            // ->topNavigation()
             ->databaseNotifications()
             ->font('Nunito')
             ->authGuard('web')

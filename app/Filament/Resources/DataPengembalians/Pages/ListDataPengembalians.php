@@ -14,11 +14,115 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
+use App\Models\PeminjamanBarang;
+use App\Models\User;
+use App\Enums\HakAkses;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ListDataPengembalians extends ListRecords
 {
     protected static string $resource = DataPengembalianResource::class;
+
+    protected $listeners = [
+        'barcodeScannedRealtime' => 'barcodeScannedRealtime'
+    ];
+
+    public function barcodeScannedRealtime($barcode)
+    {
+        $peminjaman = PeminjamanBarang::whereHas('barang', function ($q) use ($barcode) {
+            $q->where('kode_barang', $barcode);
+        })
+            ->where('status', StatusPeminjaman::DIPINJAM)
+            ->first();
+
+        if (!$peminjaman) {
+            $this->dispatch('scan-error', message: 'Barang tidak valid atau tidak sedang dipinjam');
+
+            Notification::make()
+                ->title('Barang tidak valid atau tidak sedang dipinjam')
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        try {
+            DB::transaction(function () use ($peminjaman) {
+                $peminjaman->update([
+                    'status' => StatusPeminjaman::DIKEMBALIKAN,
+                    'updated_by' => Auth::id(),
+                ]);
+
+                Notification::make()
+                    ->title('Barang berhasil dikembalikan')
+                    ->success()
+                    ->send();
+
+                Notification::make()
+                    ->title('Pengembalian berhasil')
+                    ->body("Barang {$peminjaman->barang->name} berhasil dikembalikan.")
+                    ->success()
+                    ->sendToDatabase(Auth::user());
+
+                $superadmins = User::where('role', HakAkses::SUPERADMIN)->get();
+                Notification::make()
+                    ->title('Pengembalian Barang')
+                    ->body("Barang {$peminjaman->barang->name} telah dikembalikan.")
+                    ->success()
+                    ->sendToDatabase($superadmins);
+
+                $peminjam = $peminjaman->peminjam;
+                Notification::make()
+                    ->title('Barang berhasil dikembalikan')
+                    ->body("Barang {$peminjaman->barang->name} telah dikembalikan.")
+                    ->success()
+                    ->sendToDatabase($peminjam);
+
+                if (now()->gt($peminjaman->tanggal_kembali)) {
+                    $hariTelat = now()->diffInDays($peminjaman->tanggal_kembali);
+
+                    $peminjaman->update([
+                        'status' => StatusPeminjaman::TERLAMBAT,
+                        'updated_by' => Auth::id(),
+                    ]);
+
+                    Notification::make()
+                        ->title('Pengembalian Terlambat')
+                        ->body("Pengembalian barang yang anda pinjam dikenakan denda, anda telat selama {$hariTelat} hari.")
+                        ->danger()
+                        ->sendToDatabase($peminjam);
+
+                    Notification::make()
+                        ->title('Pengembalian terlambat')
+                        ->body("Terlambat {$hariTelat} hari.")
+                        ->warning()
+                        ->send();
+
+                    Notification::make()
+                        ->title('Peminjam terlambat')
+                        ->body("Peminjam telat {$hariTelat} hari.")
+                        ->warning()
+                        ->sendToDatabase(Auth::user());
+                }
+            });
+
+            $this->dispatch('scan-processed', barcode: $barcode);
+        } catch (\Exception $e) {
+            Log::error('Error saat memproses pengembalian', [
+                'barcode' => $barcode,
+                'error' => $e->getMessage()
+            ]);
+
+            $this->dispatch('scan-error', message: 'Terjadi kesalahan saat memproses pengembalian');
+
+            Notification::make()
+                ->title('Terjadi kesalahan')
+                ->body('Gagal memproses pengembalian barang.')
+                ->danger()
+                ->send();
+        }
+    }
 
     public function getTitle(): string|Htmlable
     {
@@ -33,59 +137,22 @@ class ListDataPengembalians extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('kembalikan_peminjaman')->icon(Heroicon::Camera)
+            Action::make('kembalikan_peminjaman')
+                ->icon(Heroicon::Camera)
                 ->label('Pengembalian')
                 ->color('success')
-                ->requiresConfirmation()
                 ->modalHeading('Scan Barcode Barang')
-                ->modalDescription('Arahkan kamera ke barcode barang')
-                ->mountUsing(fn($livewire) => $livewire->barcode = null)
+                ->modalDescription('Arahkan kamera ke barcode barang untuk pengembalian')
                 ->modalContent(view('scanner.barcode'))
                 ->closeModalByClickingAway(false)
-
-                // Reset state setiap modal dibuka
-                ->mountUsing(function ($livewire) {
-                    $livewire->barcode = null;
+                ->modalSubmitAction(false)
+                ->modalCancelAction(false)
+                ->modalWidth('md')
+                ->mountUsing(function () {
+                    $this->dispatch('init-barcode-scanner');
                 })
+                ->action(function () {}),
 
-                ->action(function ($record, $livewire) {
-                    $barcode = $livewire->barcode;
-                    if (blank($barcode)) {
-                        Notification::make()
-                            ->title('Barcode belum di-scan')
-                            ->warning()
-                            ->send();
-                        return;
-                    }
-
-                    if ($barcode !== $record->barang->kode_barang) {
-                        Notification::make()
-                            ->title('Barcode tidak sesuai')
-                            ->body("Barcode terbaca: {$barcode}")
-                            ->danger()
-                            ->send();
-                        return;
-                    }
-
-                    DB::transaction(function () use ($record) {
-                        $record->update([
-                            'status' => StatusPeminjaman::MENUNGGU_PERSETUJUAN,
-                            'updated_by' => Auth::id()
-                        ]);
-                    });
-
-                    Notification::make()
-                        ->title('Barang berhasil discan')
-                        ->body('Pengembalian Anda masih menunggu persetujuan dari Petugas')
-                        ->success()
-                        ->sendToDatabase(Auth::user());
-
-                    // Toast (popup)
-                    Notification::make()
-                        ->title('Barang berhasil discan')
-                        ->success()
-                        ->send();
-                }),
             Action::make('export-laporan')
                 ->label("Export Laporan")
                 ->color('primary')
@@ -135,7 +202,6 @@ class ListDataPengembalians extends ListRecords
                     $bulan = $data['bulan'] ?? null;
                     $tahun = now()->year;
 
-                    // Notifikasi langsung (popup)
                     Notification::make()
                         ->success()
                         ->title('Export Berhasil')
@@ -143,7 +209,6 @@ class ListDataPengembalians extends ListRecords
                         ->duration(3000)
                         ->send();
 
-                    // Notifikasi ke database
                     $periodeText = $filterType === 'bulan' && $bulan
                         ? Carbon::create($tahun, $bulan)->locale('id')->translatedFormat('F Y')
                         : "Tahun {$tahun}";
@@ -172,7 +237,6 @@ class ListDataPengembalians extends ListRecords
                         'tahun' => $tahun
                     ]);
                 })
-
         ];
     }
 }

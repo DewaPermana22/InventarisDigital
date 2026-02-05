@@ -17,11 +17,6 @@ class DataPengembaliansTable
             ->emptyStateHeading('Data Pengembalian Kosong')
             ->emptyStateDescription('Belum ada data pengembalian yang tercatat.')
             ->columns([
-                ImageColumn::make('barang.foto')
-                    ->label('Foto')
-                    ->square()
-                    ->defaultImageUrl(url('/images/placeholder.png')),
-
                 TextColumn::make('barang.kode_barang')
                     ->label('Kode Barang')
                     ->searchable()

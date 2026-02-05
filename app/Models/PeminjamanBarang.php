@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusPeminjaman;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -50,5 +51,10 @@ class PeminjamanBarang extends Model
     public function verifikasiPengembalian()
     {
         return $this->hasOne(VerifikasiPengembalian::class, 'peminjaman_id');
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->whereIn('status', StatusPeminjaman::active());
     }
 }

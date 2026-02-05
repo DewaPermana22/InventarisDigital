@@ -31,11 +31,6 @@ class VerifikasiDendasTable
             ->emptyStateDescription('Tidak terdapat pengembalian barang dengan denda untuk diverifikasi saat ini.')
             ->recordUrl(null)
             ->columns([
-                ImageColumn::make('barang.foto')
-                    ->label('Foto')
-                    ->square()
-                    ->defaultImageUrl(url('/images/placeholder.png')),
-
                 TextColumn::make('barang.kode_barang')
                     ->label('Kode Barang')
                     ->searchable()
@@ -216,59 +211,7 @@ class VerifikasiDendasTable
                                 });
                             }),
                     ]),
-
-                Action::make('verifikasi_pengembalian')
-                    ->label('Verifikasi')
-                    ->color('success')
-                    ->icon(Heroicon::CheckCircle)
-                    ->visible(fn($record) => $record->status === StatusPeminjaman::MENUNGGU_PERSETUJUAN)
-                    ->button()
-                    ->requiresConfirmation()
-                    ->modalHeading('Verifikasi Pengembalian')
-                    ->modalDescription('Periksa data sebelum memverifikasi.')
-                    ->modalSubmitAction(fn(Action $action) =>
-                    $action
-                        ->label('Verifikasi')
-                        ->color('success'))
-                    ->color('warning')
-                    ->modalCancelAction(
-                        fn(Action $action) =>
-                        $action
-                            ->label('Batal')
-                            ->color('danger')
-                    )
-                    ->action(function ($record) {
-                        DB::transaction(function () use ($record) {
-                            $record->update([
-                                'status' => StatusPeminjaman::DIKEMBALIKAN,
-                                'tanggal_kembali' => today(),
-                                'updated_by' => Auth::id()
-                            ]);
-                        });
-                        $superadmins = User::where('role', HakAkses::SUPERADMIN)
-                            ->where('is_active', true)
-                            ->get();
-
-                        $petugasLogin = Auth::user();
-
-                        Notification::make()
-                            ->title('Pengajuan Disetujui')
-                            ->body($petugasLogin->name . ' telah menyetujui pengajuan barang')
-                            ->success()
-                            ->sendToDatabase($superadmins);
-                        Notification::make()
-                            ->title('Pengembalian Diverifikasi')
-                            ->body('Pengembalian barang ' . $record->barang->nama_barang . ' telah diverifikasi.')
-                            ->success()
-                            ->sendToDatabase($record->peminjam);
-
-                        Notification::make()
-                            ->title('Berhasil memverifikasi pengembalian')
-                            ->success()
-                            ->send();
-                    }),
             ])
-
             ->defaultSort('created_at', 'desc')
             ->striped();
     }

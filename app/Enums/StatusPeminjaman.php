@@ -11,20 +11,18 @@ enum StatusPeminjaman: string
     case DIKEMBALIKAN = 'dikembalikan';
     case TERLAMBAT = 'terlambat';
     case MENUNGGU_VERIFIKASI = 'proses_verifikasi';
-    case MENUNGGU_PERSETUJUAN = 'proses_penyetujuan';
     case VERIFIKASI_DITOLAK = 'verifikasi_ditolak';
 
     public function label(): string
     {
         return match ($this) {
-            self::BELUM_DISETUJUI => 'Menunggu',
+            self::BELUM_DISETUJUI => 'Menunggu Persetujuan',
             self::DIPINJAM => 'Dipinjam',
             self::DITOLAK => 'Ditolak',
             self::DIBATALKAN => 'Dibatalkan',
             self::DIKEMBALIKAN => 'Dikembalikan',
             self::TERLAMBAT => 'Terlambat',
             self::MENUNGGU_VERIFIKASI => 'Menunggu Verifikasi',
-            self::MENUNGGU_PERSETUJUAN => 'Menunggu (Pengembalian)',
             self::VERIFIKASI_DITOLAK => 'Verifikasi Ditolak',
         };
     }
@@ -33,7 +31,6 @@ enum StatusPeminjaman: string
     {
         return match ($this) {
             self::BELUM_DISETUJUI => 'warning',
-            self::MENUNGGU_PERSETUJUAN => 'warning',
             self::DIPINJAM => 'primary',
             self::DIKEMBALIKAN => 'success',
             self::TERLAMBAT => 'danger',
@@ -55,20 +52,20 @@ enum StatusPeminjaman: string
     }
 
     // Untuk Filtering peminjaman yang aktif
-    public static function active(){
+    public static function active()
+    {
         return [
             self::BELUM_DISETUJUI,
             self::DIPINJAM,
             self::TERLAMBAT,
             self::MENUNGGU_VERIFIKASI,
-            self::MENUNGGU_PERSETUJUAN,
             self::VERIFIKASI_DITOLAK,
         ];
     }
 
-    public static function verifikasi(){
-        return[
-            self::MENUNGGU_PERSETUJUAN,
+    public static function verifikasi()
+    {
+        return [
             self::MENUNGGU_VERIFIKASI
         ];
     }

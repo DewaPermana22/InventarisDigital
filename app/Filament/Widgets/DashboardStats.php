@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Enums\HakAkses;
-use App\Enums\KondisiBarang;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;

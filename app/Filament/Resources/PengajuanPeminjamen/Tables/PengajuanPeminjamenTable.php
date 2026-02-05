@@ -26,17 +26,7 @@ class PengajuanPeminjamenTable
         return $table
             ->emptyStateHeading('Belum ada pengajuan peminjaman')
             ->emptyStateDescription('Saat ini belum terdapat pengajuan peminjaman yang perlu diproses')
-
             ->columns([
-                ImageColumn::make('barang.foto')
-                    ->label('Foto')
-                    ->square()
-                    ->defaultImageUrl(url('/images/placeholder.png'))
-                    ->extraImgAttributes([
-                        'alt' => 'Foto Barang',
-                        'loading' => 'lazy',
-                    ]),
-
                 TextColumn::make('barang.kode_barang')
                     ->label('Kode Barang')
                     ->searchable()

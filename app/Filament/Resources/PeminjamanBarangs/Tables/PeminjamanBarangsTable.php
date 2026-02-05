@@ -30,22 +30,13 @@ use Filament\Tables\Filters\SelectFilter;
 
 class PeminjamanBarangsTable
 {
-    public static function configure(Table $table): Table
+    public static function configure(Table $table)
     {
         return $table
             ->emptyStateHeading('Belum ada peminjaman barang')
             ->emptyStateDescription('Silahkan ajukan peminjaman barang yang tersedia')
 
             ->columns([
-                ImageColumn::make('barang.foto')
-                    ->label('Foto')
-                    ->square()
-                    ->defaultImageUrl(url('/images/placeholder.png'))
-                    ->extraImgAttributes([
-                        'alt' => 'Foto Barang',
-                        'loading' => 'lazy',
-                    ]),
-
                 TextColumn::make('barang.kode_barang')
                     ->label('Kode Barang')
                     ->searchable()
