@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\PeminjamanBarang;
 use App\Models\User;
 use App\Enums\HakAkses;
+use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 
 class ListDataPengembalians extends ListRecords
 {
@@ -131,7 +133,7 @@ class ListDataPengembalians extends ListRecords
 
     public function getSubheading(): string|Htmlable|null
     {
-        return "Riwayat peminjaman barang yang telah selesai";
+        return "Daftar riwayat pengembalian barang dan data pengajuan pengembalian";
     }
 
     protected function getHeaderActions(): array
@@ -141,6 +143,7 @@ class ListDataPengembalians extends ListRecords
                 ->icon(Heroicon::Camera)
                 ->label('Pengembalian')
                 ->color('success')
+                ->modalIcon(Lucideicon::ScanBarcode)
                 ->modalHeading('Scan Barcode Barang')
                 ->modalDescription('Arahkan kamera ke barcode barang untuk pengembalian')
                 ->modalContent(view('scanner.barcode'))
@@ -155,7 +158,7 @@ class ListDataPengembalians extends ListRecords
 
             Action::make('export-laporan')
                 ->label("Export Laporan")
-                ->color('primary')
+                ->color(Color::Indigo)
                 ->icon(Heroicon::OutlinedPrinter)
                 ->requiresConfirmation()
                 ->modalHeading('Export Laporan Peminjaman')

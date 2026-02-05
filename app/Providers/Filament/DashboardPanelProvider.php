@@ -54,7 +54,7 @@ class DashboardPanelProvider extends PanelProvider
             ->loginRouteSlug('login')
             ->spa()
             ->profile()
-            // ->topNavigation()
+            ->topNavigation()
             ->databaseNotifications()
             ->font('Nunito')
             ->authGuard('web')

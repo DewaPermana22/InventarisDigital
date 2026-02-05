@@ -4,6 +4,7 @@ namespace App\Filament\Resources\KategoriBarangs\Pages;
 
 use App\Filament\Resources\KategoriBarangs\KategoriBarangResource;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Colors\Color;
 
 class CreateKategoriBarang extends CreateRecord
 {
@@ -27,7 +28,7 @@ class CreateKategoriBarang extends CreateRecord
     {
         return [
             $this->getCreateFormAction()
-                ->label('Simpan'),
+                ->label('Simpan')->color(Color::Indigo),
             $this->getCancelFormAction()
                 ->label('Batal')->color('danger'),
         ];

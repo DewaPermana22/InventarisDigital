@@ -68,7 +68,7 @@ class DataPengembalianResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('status', StatusPeminjaman::DIKEMBALIKAN)
+            ->whereIn('status', [StatusPeminjaman::DIKEMBALIKAN, StatusPeminjaman::PROSES_PENGEMBALIAN])
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

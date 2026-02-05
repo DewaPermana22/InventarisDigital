@@ -2,17 +2,21 @@
     <div class="max-w-7xl mx-auto">
 
         <div class="text-center mb-16 md:mb-20">
-            <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
+            <h2 data-aos="fade-up" class="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
                 Satu Sistem untuk <span class="text-indigo-500">Semua Sektor</span>
             </h2>
-            <p class="text-slate-500 max-w-2xl mx-auto text-base md:text-lg font-medium leading-relaxed">
+            <p data-aos="fade-up" data-aos-delay="100" class="text-slate-500 max-w-2xl mx-auto text-base md:text-lg font-medium leading-relaxed">
                 Fleksibilitas InventarisDigital memungkinkan manajemen aset yang presisi, apa pun jenis industrinya.
             </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            @foreach($targets as $target)
-            <article class="group p-8 md:p-10 border border-slate-100 rounded-[2.5rem] bg-slate-50/30 hover:bg-white hover:border-indigo-200 transition-all duration-300">
+            @foreach($targets as $index => $target)
+            <article
+                data-aos="fade-up"
+                data-aos-delay="{{ ($index + 1) * 100 }}"
+                class="group p-8 md:p-10 border border-slate-100 rounded-[2.5rem] bg-slate-50/30 hover:bg-white hover:border-indigo-200 transition-all duration-300">
+
                 <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-indigo-500 transition-colors duration-300">
                     <i data-lucide="{{ $target['icon'] }}"
                         class="w-7 h-7 text-indigo-600 group-hover:text-white transition-colors duration-300"

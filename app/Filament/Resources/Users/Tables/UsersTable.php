@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Tables;
 
 use App\Enums\HakAkses;
+use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
@@ -102,8 +103,8 @@ class UsersTable
                     DeleteBulkAction::make(),
                     BulkAction::make('cetakKartu')
                         ->label('Cetak Kartu')
-                        ->icon(Heroicon::OutlinedPrinter)
-                        ->color('primary')
+                        ->icon(LucideIcon::IdCard)
+                        ->color(Color::Indigo)
                         ->action(function ($records) {
                             if ($records->count() > 4) {
                                 Notification::make()

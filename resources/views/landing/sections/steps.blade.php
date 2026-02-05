@@ -4,23 +4,27 @@
 
     <div class="max-w-4xl mx-auto relative z-10">
         <div class="text-center mb-12 md:mb-20">
-            <div class="inline-block px-3 py-1 mb-4 text-[10px] font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 rounded-full">
+            <div data-aos="fade-up" class="inline-block px-3 py-1 mb-4 text-[10px] font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 rounded-full">
                 Panduan Cepat
             </div>
-            <h2 class="text-2xl md:text-4xl font-extrabold mb-4 text-slate-900 leading-tight">
+            <h2 data-aos="fade-up" data-aos-delay="50" class="text-2xl md:text-4xl font-extrabold mb-4 text-slate-900 leading-tight">
                 Cara Menggunakan Aplikasi <br class="hidden md:block"> Inventaris Kami
             </h2>
-            <p class="text-slate-600 text-base md:text-lg px-2 max-w-2xl mx-auto">
+            <p data-aos="fade-up" data-aos-delay="100" class="text-slate-600 text-base md:text-lg px-2 max-w-2xl mx-auto">
                 Mulai digitalisasi aset Anda hanya dengan 3 langkah sederhana dan cepat untuk efisiensi maksimal.
             </p>
         </div>
 
         <div class="relative px-2">
-            <div class="absolute left-5 md:left-6 top-2 bottom-2 w-0.5 bg-gradient-to-b from-indigo-500 via-indigo-200 to-transparent hidden sm:block -translate-x-1/2" aria-hidden="true"></div>
+            <div data-aos="fade-in" data-aos-delay="300" class="absolute left-5 sm:left-[20px] md:left-[24px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-indigo-500 via-indigo-200 to-transparent hidden sm:block -translate-x-1/2" aria-hidden="true"></div>
 
             <ol class="space-y-12 md:space-y-20 relative">
                 @foreach($steps as $index => $step)
-                <li class="flex flex-col sm:flex-row gap-6 sm:gap-10 relative group">
+                <li
+                    data-aos="fade-up"
+                    data-aos-delay="{{ ($index + 1) * 100 }}"
+                    class="flex flex-col sm:flex-row gap-6 sm:gap-10 relative group">
+
                     <div class="flex-none w-10 h-10 md:w-12 md:h-12 bg-indigo-500 text-white rounded-full flex items-center justify-center font-bold z-10 text-base md:text-lg shadow-xl shadow-indigo-200 ring-4 ring-white transition-all duration-300">
                         {{ $loop->iteration }}
                     </div>

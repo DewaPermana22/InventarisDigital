@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Ruangans\Pages;
 
 use App\Filament\Resources\Ruangans\RuanganResource;
-use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Colors\Color;
 use Illuminate\Contracts\Support\Htmlable;
 
 class CreateRuangan extends CreateRecord
@@ -28,7 +28,8 @@ class CreateRuangan extends CreateRecord
     public function getFormActions(): array
     {
         return [
-            $this->getCreateFormAction()->label('Simpan'),
+            $this->getCreateFormAction()->label('Simpan')
+            ->color(Color::Indigo),
             $this->getCancelFormAction()->label('Batal')
             ->color('danger'),
         ];

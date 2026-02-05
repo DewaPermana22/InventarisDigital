@@ -72,12 +72,13 @@ class VerifikasiDendasTable
                 Action::make('verifikasi')
                     ->label('Verifikasi')
                     ->color('success')
-                    ->icon(Heroicon::DocumentCheck)
+                    ->icon(Heroicon::ExclamationCircle)
                     ->visible(fn($record) => $record->status === StatusPeminjaman::MENUNGGU_VERIFIKASI)
                     ->button()
-                    ->modalHeading('Verifikasi Pengembalian')
+                    ->modalIcon(Heroicon::OutlinedExclamationTriangle)
+                    ->modalHeading('Verifikasi Pembayaran Denda')
                     ->modalDescription('Periksa data sebelum memverifikasi.')
-                    ->modalWidth('2xl')
+                    ->modalWidth('md')
                     ->modalSubmitAction(fn(Action $action) =>
                     $action
                         ->label('Verifikasi')
@@ -87,7 +88,6 @@ class VerifikasiDendasTable
                         fn(Action $action) =>
                         $action
                             ->label('Batal')
-                            ->color('danger')
                     )
 
 

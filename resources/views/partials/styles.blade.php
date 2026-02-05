@@ -1,11 +1,13 @@
 <style>
     body {
-        font-family: 'Nunito', sans-serif;
+        font-family: 'Nunito';
         scroll-behavior: smooth;
+        color: #0f172a;
     }
 
     html {
         scroll-behavior: smooth;
+        overflow-x: hidden;
     }
 
 

@@ -3,19 +3,10 @@
 namespace App\Filament\Resources\PeminjamanBarangSuperAdmins\Tables;
 
 use App\Enums\StatusPeminjaman;
-use Filament\Actions\Action;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Notifications\Notification;
-use Filament\Support\Icons\Heroicon;
+
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class PeminjamanBarangSuperAdminsTable
@@ -27,15 +18,6 @@ class PeminjamanBarangSuperAdminsTable
             ->recordUrl(null)
             ->emptyStateDescription('Saat ini belum ada data peminjaman yang ditambahkan.')
             ->columns([
-                ImageColumn::make('barang.foto')
-                    ->label('Foto')
-                    ->square()
-                    ->defaultImageUrl(url('/images/placeholder.png'))
-                    ->extraImgAttributes([
-                        'alt' => 'Foto Barang',
-                        'loading' => 'lazy',
-                    ]),
-
                 TextColumn::make('barang.kode_barang')
                     ->label('Kode Barang')
                     ->searchable()

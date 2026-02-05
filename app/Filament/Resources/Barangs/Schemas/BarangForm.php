@@ -90,19 +90,27 @@ class BarangForm
                                 FileUpload::make('foto')
                                     ->label('Foto Barang')
                                     ->image()
+                                    ->extraAttributes([
+                                        'accept' => 'image/*',
+                                        'capture' => 'user', // ✅ buka kamera (HP)
+                                    ])
                                     ->directory('barangs')
                                     ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
                                     ->maxSize(2048)
                                     ->lazy()
                                     ->imageEditor()
                                     ->imageEditorAspectRatios([
+                                        null,
                                         '1:1',
                                         '4:3',
                                         '16:9',
                                     ])
+                                    ->downloadable()
+                                    ->openable()
                                     ->imagePreviewHeight('200')
                                     ->panelLayout('integrated')
-                                    ->imageResizeMode('cover'),
+                                    ->imageResizeMode('cover')
+                                    ->uploadingMessage("Mengunggah Foto Barang..."),
 
                                 Textarea::make('catatan')
                                     ->label('Catatan Tambahan')

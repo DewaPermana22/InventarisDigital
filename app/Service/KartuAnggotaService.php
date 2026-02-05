@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Models\User;
-use Milon\Barcode\DNS1D;
+use Milon\Barcode\DNS2D;
 
 class KartuAnggotaService
 {
@@ -16,7 +16,7 @@ class KartuAnggotaService
             ->whereIn('id', $ids)
             ->get();
 
-        $barcode = new DNS1D();
+        $barcode = new DNS2D();
         $barcode->setStorPath(storage_path('app/barcodes'));
 
         foreach ($users as $user) {
@@ -26,7 +26,7 @@ class KartuAnggotaService
             // Generate barcode
             $user->barcode = $barcode->getBarcodePNG(
                 $user->kode,
-                'C128'
+                'QRCODE'
             );
 
             // Process photo

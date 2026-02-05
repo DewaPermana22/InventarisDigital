@@ -4,20 +4,20 @@
 
     <div class="max-w-7xl mx-auto px-6 relative z-10">
         <header class="text-center mb-16 md:mb-24">
-            <div class="inline-block px-3 py-1 mb-4 text-[10px] font-bold tracking-[0.2em] text-indigo-600 uppercase bg-indigo-50 rounded-full border border-indigo-100">
+            <div data-aos="fade-up" class="inline-block px-3 py-1 mb-4 text-[10px] font-bold tracking-[0.2em] text-indigo-600 uppercase bg-indigo-50 rounded-full border border-indigo-100">
                 Pilihan Investasi Bisnis
             </div>
-            <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+            <h2 data-aos="fade-up" data-aos-delay="100" class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
                 Paket Harga <span class="text-indigo-500">Terukur & Transparan</span>
             </h2>
-            <p class="text-slate-500 max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-medium">
+            <p data-aos="fade-up" data-aos-delay="200" class="text-slate-500 max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-medium">
                 Optimalkan manajemen stok barang Anda dengan biaya investasi yang sesuai dengan skala operasional perusahaan.
             </p>
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-stretch">
 
-            <article class="flat-card p-10 rounded-[2rem] flex flex-col shadow-sm bg-white border border-slate-200">
+            <article data-aos="fade-up" data-aos-delay="300" class="flat-card p-10 rounded-[2rem] flex flex-col shadow-sm bg-white border border-slate-200">
                 <div class="mb-8">
                     <h3 class="text-xl font-extrabold text-slate-800 mb-2">Paket Startup</h3>
                     <div class="text-3xl font-black text-slate-900 mb-4">Rp 1.500.000</div>
@@ -47,7 +47,7 @@
                 </button>
             </article>
 
-            <article class="flat-card p-10 rounded-[2rem] flex flex-col border-2 border-indigo-600 shadow-xl relative overflow-visible bg-white transform md:scale-105 z-20">
+            <article data-aos="fade-up" data-aos-delay="400" class="flat-card p-10 rounded-[2rem] flex flex-col border-2 border-indigo-600 shadow-xl relative overflow-visible bg-white transform md:scale-105 z-20">
                 <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-black px-6 py-1.5 rounded-full uppercase tracking-widest shadow-lg whitespace-nowrap">
                     Paling Populer
                 </div>
@@ -81,7 +81,7 @@
                 </button>
             </article>
 
-            <article class="flat-card p-10 rounded-[2rem] flex flex-col shadow-sm bg-white border border-slate-200">
+            <article data-aos="fade-up" data-aos-delay="500" class="flat-card p-10 rounded-[2rem] flex flex-col shadow-sm bg-white border border-slate-200">
                 <div class="mb-8">
                     <h3 class="text-xl font-extrabold text-slate-800 mb-2">Paket Sultan</h3>
                     <div class="text-3xl font-black text-slate-900 mb-4">Rp 7.000.000</div>
@@ -116,24 +116,3 @@
         </div>
     </div>
 </section>
-
-<style>
-    .continuous-gradient {
-        background: linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
-    }
-
-    .flat-card {
-        background: #ffffff;
-        transition: border-color 0.3s ease;
-    }
-
-    .hero-blob {
-        position: absolute;
-        width: 30rem;
-        height: 30rem;
-        background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
-        filter: blur(60px);
-        z-index: 0;
-        pointer-events: none;
-    }
-</style>

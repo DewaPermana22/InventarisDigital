@@ -8,6 +8,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Carbon\Carbon;
 use Filament\Forms\Components\Select;
+use Filament\Support\Colors\Color;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
 use Filament\Support\Icons\Heroicon;
@@ -25,7 +26,7 @@ class ListRiwayatPeminjamen extends ListRecords
         return [
             Action::make('export-riwayat')
                 ->label("Export Riwayat")
-                ->color('primary')
+                ->color(Color::Indigo)
                 ->icon(Heroicon::OutlinedPrinter)
                 ->requiresConfirmation()
                 ->modalHeading('Export Riwayat Peminjaman')

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Colors\Color;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Hash;
 
@@ -37,7 +38,7 @@ class CreateUser extends CreateRecord
     function getFormActions(): array
     {
         return [
-            $this->getCreateFormAction()->label('Simpan')->color('primary'),
+            $this->getCreateFormAction()->label('Simpan')->color(Color::Indigo),
             $this->getCancelFormAction()->label('Batal')->color('danger')
         ];
     }

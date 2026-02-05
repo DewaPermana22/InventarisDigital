@@ -10,6 +10,7 @@ enum StatusPeminjaman: string
     case DIPINJAM = 'dipinjam';
     case DIKEMBALIKAN = 'dikembalikan';
     case TERLAMBAT = 'terlambat';
+    case PROSES_PENGEMBALIAN = "proses_pengembalian";
     case MENUNGGU_VERIFIKASI = 'proses_verifikasi';
     case VERIFIKASI_DITOLAK = 'verifikasi_ditolak';
 
@@ -17,6 +18,7 @@ enum StatusPeminjaman: string
     {
         return match ($this) {
             self::BELUM_DISETUJUI => 'Menunggu Persetujuan',
+            self::PROSES_PENGEMBALIAN => 'Proses (Pengembalian)',
             self::DIPINJAM => 'Dipinjam',
             self::DITOLAK => 'Ditolak',
             self::DIBATALKAN => 'Dibatalkan',
@@ -31,6 +33,7 @@ enum StatusPeminjaman: string
     {
         return match ($this) {
             self::BELUM_DISETUJUI => 'warning',
+            self::PROSES_PENGEMBALIAN => 'warning',
             self::DIPINJAM => 'primary',
             self::DIKEMBALIKAN => 'success',
             self::TERLAMBAT => 'danger',
@@ -60,6 +63,7 @@ enum StatusPeminjaman: string
             self::TERLAMBAT,
             self::MENUNGGU_VERIFIKASI,
             self::VERIFIKASI_DITOLAK,
+            self::PROSES_PENGEMBALIAN,
         ];
     }
 

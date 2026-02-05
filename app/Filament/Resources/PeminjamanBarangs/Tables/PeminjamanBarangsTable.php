@@ -124,6 +124,53 @@ class PeminjamanBarangsTable
                             ->sendToDatabase($petugas);
                     }),
 
+                Action::make('kembalikan')
+                    ->label('Kembalikan')
+                    ->color('success')
+                    ->icon(Lucideicon::ArchiveRestore)
+                    ->visible(
+                        fn($record) =>
+                        $record->status === StatusPeminjaman::DIPINJAM
+                    )
+                    ->button()
+                    ->requiresConfirmation()
+                    ->modalHeading('Kembalikan Barang?')
+                    ->modalDescription('Anda yakin ingin mengembalikan barang ini?')
+                    ->modalIcon(Lucideicon::ArchiveRestore)
+                    ->modalSubmitActionLabel('Ya, Kembalikan')
+                    ->action(function ($record) {
+                        $record->update([
+                            'status' => StatusPeminjaman::PROSES_PENGEMBALIAN,
+                            'updated_at' => now()
+                        ]);
+
+                        $petugas = User::where('role', HakAkses::ADMIN)
+                            ->where('is_active', true)
+                            ->get();
+
+                        // notifikasi ke peminjam
+                        Notification::make()
+                            ->title('Pengajuan Pengembalian Dikirim')
+                            ->body('Pengajuan pengembalian barang Anda berhasil dikirim dan menunggu verifikasi petugas.')
+                            ->success()
+                            ->sendToDatabase($record->peminjam);
+
+                        // Pop up ke user
+                        Notification::make()
+                            ->title('Pengajuan Pengembalian Dikirim')
+                            ->body('Pengajuan pengembalian berhasil dikirim. Silakan tunggu verifikasi petugas.')
+                            ->success()
+                            ->send();
+
+                        // notifikasi ke petugas
+                        Notification::make()
+                            ->title('Pengajuan Pengembalian Baru')
+                            ->body('Barang "' . $record->barang->name . '" dari ' . $record->peminjam->name . ' diajukan untuk dikembalikan.')
+                            ->info()
+                            ->sendToDatabase($petugas);
+                    }),
+
+
                 // Kembalikan Barang (Terlambat)
                 Action::make('kembalikan_terlambat')
                     ->label('Kembalikan')

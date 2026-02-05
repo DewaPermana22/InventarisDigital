@@ -6,6 +6,7 @@ use App\Filament\Resources\Barangs\BarangResource;
 use App\Models\Barang;
 use App\Models\KategoriBarang;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -30,7 +31,7 @@ class CreateBarang extends CreateRecord
     {
         return [
             $this->getCreateFormAction()
-                ->label('Simpan'),
+                ->label('Simpan')->color(Color::Indigo),
             $this->getCancelFormAction()
                 ->label('Batal')->color('danger'),
         ];
