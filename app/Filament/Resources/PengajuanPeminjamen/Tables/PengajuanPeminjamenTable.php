@@ -12,9 +12,7 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -53,9 +51,6 @@ class PengajuanPeminjamenTable
                     ->label('Tanggal Pengajuan')
                     ->date('d/m/Y')
                     ->sortable(),
-            ])
-            ->filters([
-                TrashedFilter::make(),
             ])
             ->recordActions([
                 Action::make('terima')

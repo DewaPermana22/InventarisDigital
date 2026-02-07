@@ -31,6 +31,7 @@ class BarangTersediaResource extends Resource
     {
         return Auth::user()?->role == HakAkses::USER;
     }
+    protected static ?string $slug = "available-items";
     protected static string|UnitEnum|null $navigationGroup = "Aktivitas";
     protected static string|BackedEnum|null $navigationIcon = LucideIcon::Package;
 

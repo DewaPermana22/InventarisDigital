@@ -59,6 +59,7 @@ class ListBarangs extends ListRecords
                         ->actions([
                             Action::make('view')
                                 ->button()
+                                ->color(Color::Indigo)
                                 ->label('Download Lagi')
                                 ->url(route('export.barangs'))
                                 ->openUrlInNewTab(),

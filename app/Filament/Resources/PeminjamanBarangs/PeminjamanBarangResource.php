@@ -14,7 +14,6 @@ use BackedEnum;
 use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -37,6 +36,7 @@ class PeminjamanBarangResource extends Resource
         return Auth::user()?->role == HakAkses::USER;
     }
 
+    protected static ?string $slug = "loan";
     protected static ?string $recordTitleAttribute = 'id';
 
     public static function form(Schema $schema): Schema

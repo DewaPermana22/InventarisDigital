@@ -34,7 +34,12 @@ class DataPengembalianResource extends Resource
     }
 
     protected static string|BackedEnum|null $navigationIcon = LucideIcon::ArchiveRestore;
+    public static function navigationSort(?int $sort): void
+    {
+        parent::navigationSort(3);
+    }
 
+    protected static ?string $slug = "loan-returns";
     protected static string|UnitEnum|null $navigationGroup = "Aktivitas Peminjaman";
     protected static ?string $navigationLabel = "Pengembalian Barang";
     protected static ?string $recordTitleAttribute = 'name';

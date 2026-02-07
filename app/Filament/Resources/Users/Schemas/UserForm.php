@@ -20,25 +20,6 @@ class UserForm
                 Section::make('Informasi Pengguna')
                     ->description('Lengkapi data di bawah ini untuk menambahkan akun pengguna baru')
                     ->components([
-                        FileUpload::make('profile_pict')
-                            ->image()
-                            ->directory('profile_pict')
-                            ->maxSize(2048)
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg'])
-                            ->imageEditor()
-                            ->imageEditorAspectRatios([
-                                '3:4',
-                            ])
-                            ->imageEditorEmptyFillColor('#000000')
-                            ->imagePreviewHeight('200')
-                            ->panelLayout('integrated')
-                            ->imageCropAspectRatio('3:4')
-                            ->imageResizeTargetWidth(600)
-                            ->imageResizeTargetHeight(800)
-                            ->imageEditor()
-                            ->helperText('Pastikan Wajah Terlihat dalam Bingkai!')
-                            ->imageResizeMode('cover'),
-
                         TextInput::make('name')
                             ->label('Nama Lengkap')
                             ->required()
@@ -50,6 +31,13 @@ class UserForm
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
+
+                        TextInput::make('phone_number')
+                            ->label('Nomor Telepon')
+                            ->rule('regex:/^\+?[0-9]{10,15}$/')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(15),
 
                         Select::make('role')
                             ->label('Role')

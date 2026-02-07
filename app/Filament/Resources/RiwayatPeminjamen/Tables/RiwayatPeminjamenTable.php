@@ -40,14 +40,18 @@ class RiwayatPeminjamenTable
                     ->date('d/m/Y'),
                 TextColumn::make('tanggal_disetujui')
                     ->label('Tanggal Disetujui')
-                    ->date('d/m/Y'),
+                    ->date('d/m/Y')
+                    ->placeholder('-'),
                 TextColumn::make('petugas.name')
                     ->label('Nama Petugas')
+                    ->getStateUsing(fn($record) => $record->petugas?->name ?? '-')
                     ->formatStateUsing(fn($state) => Str::limit($state, 20))
                     ->tooltip(fn($state) => $state),
+
                 TextColumn::make('tanggal_kembali')
                     ->label('Tanggal Kembali')
-                    ->date('d/m/Y'),
+                    ->date('d/m/Y')
+                    ->placeholder('-'),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()

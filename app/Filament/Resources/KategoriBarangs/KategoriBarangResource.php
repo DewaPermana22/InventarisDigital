@@ -25,6 +25,7 @@ class KategoriBarangResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $slug = "item-categories";
     protected static ?string $navigationLabel = 'Kategori Barang';
     protected static ?string $breadcrumb = 'Kategori Barang';
     protected static string|UnitEnum|null $navigationGroup = "Inventaris";

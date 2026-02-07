@@ -3,20 +3,12 @@
 namespace App\Filament\Resources\RiwayatDendas;
 
 use App\Enums\HakAkses;
-use App\Filament\Resources\RiwayatDendas\Pages\CreateRiwayatDenda;
-use App\Filament\Resources\RiwayatDendas\Pages\EditRiwayatDenda;
 use App\Filament\Resources\RiwayatDendas\Pages\ListRiwayatDendas;
-use App\Filament\Resources\RiwayatDendas\Pages\ViewRiwayatDenda;
-use App\Filament\Resources\RiwayatDendas\Schemas\RiwayatDendaForm;
-use App\Filament\Resources\RiwayatDendas\Schemas\RiwayatDendaInfolist;
 use App\Filament\Resources\RiwayatDendas\Tables\RiwayatDendasTable;
 use App\Models\PeminjamanBarang;
-use App\Models\RiwayatDenda;
 use BackedEnum;
 use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -38,6 +30,8 @@ class RiwayatDendaResource extends Resource
     {
         return Auth::user()?->role == HakAkses::USER;
     }
+
+    protected static ?string $slug = "fine-history";
     protected static string|UnitEnum|null $navigationGroup = "Riwayat";
     protected static ?string $navigationLabel = "Riwayat Denda";
     protected static ?int $navigationSort = 2;

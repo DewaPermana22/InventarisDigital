@@ -34,6 +34,7 @@ class BarangResource extends Resource
     protected static ?string $model = Barang::class;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCube;
     protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $slug = "items";
     protected static string|UnitEnum|null $navigationGroup = "Inventaris";
     protected static ?string $navigationLabel = 'Data Barang';
     protected static ?string $breadcrumb = 'Data Barang';

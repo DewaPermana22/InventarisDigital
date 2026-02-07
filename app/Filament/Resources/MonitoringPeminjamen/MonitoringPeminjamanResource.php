@@ -26,13 +26,15 @@ class MonitoringPeminjamanResource extends Resource
     protected static ?string $model = PeminjamanBarang::class;
     protected static ?string $recordTitleAttribute = 'name';
     protected static ?string $navigationLabel = "Monitoring Peminjaman";
+
+    protected static ?string $slug = 'loan-monitoring';
     public static function canViewAny(): bool
     {
-        return Auth::user()?->role == HakAkses::ADMIN;
+        return Auth::user()?->role == HakAkses::ADMIN || Auth::user()?->role == HakAkses::SUPERADMIN;
     }
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->role == HakAkses::ADMIN;
+        return Auth::user()?->role == HakAkses::ADMIN || Auth::user()?->role == HakAkses::SUPERADMIN;
     }
 
     public static function getEloquentQuery(): Builder

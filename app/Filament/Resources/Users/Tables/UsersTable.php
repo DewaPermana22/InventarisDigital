@@ -11,7 +11,6 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Colors\Color;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -28,18 +27,6 @@ class UsersTable
             ->emptyStateHeading('Data akun masih kosong')
             ->emptyStateDescription('Tambahkan akun untuk mulai menggunakan sistem.')
             ->columns([
-                ImageColumn::make('profile_pict')
-                    ->circular()
-                    ->extraImgAttributes([
-                        'alt' => 'Logo',
-                        'loading' => 'lazy'
-                    ])
-                    ->label('Foto')
-                    ->getStateUsing(function ($record) {
-                        return $record->profile_pict ?? 'images/default_pp.jpg';
-                    })
-                    ->defaultImageUrl(asset('images/default_pp.jpg')),
-
                 TextColumn::make('name')
                     ->searchable()
                     ->label('Nama')

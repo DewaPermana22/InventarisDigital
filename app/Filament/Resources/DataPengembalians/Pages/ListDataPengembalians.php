@@ -225,6 +225,7 @@ class ListDataPengembalians extends ListRecords
                             Action::make('view')
                                 ->button()
                                 ->label('Download Lagi')
+                                ->color(Color::Indigo)
                                 ->url(route('export.laporan-peminjaman', [
                                     'filter_type' => $filterType,
                                     'bulan' => $bulan,

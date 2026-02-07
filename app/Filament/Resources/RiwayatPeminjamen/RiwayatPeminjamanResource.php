@@ -27,7 +27,7 @@ use UnitEnum;
 class RiwayatPeminjamanResource extends Resource
 {
     protected static ?string $model = PeminjamanBarang::class;
-
+    protected static ?string $slug = "loan-history";
     protected static string|UnitEnum|null $navigationGroup = "Riwayat";
     protected static ?string $label = "Riwayat Peminjaman";
 

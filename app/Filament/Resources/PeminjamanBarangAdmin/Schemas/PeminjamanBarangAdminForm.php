@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\PeminjamanBarangSuperAdmins\Schemas;
+namespace App\Filament\Resources\PeminjamanBarangAdmin\Schemas;
 
 use App\Enums\KondisiBarang;
 use App\Enums\StatusPeminjaman;
@@ -13,7 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Illuminate\Database\Eloquent\Builder;
 
-class PeminjamanBarangSuperAdminForm
+class PeminjamanBarangAdminForm
 {
     public static function configure(Schema $schema): Schema
     {

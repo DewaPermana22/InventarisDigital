@@ -36,6 +36,8 @@ class VerifikasiDendaResource extends Resource
         return VerifikasiDendaForm::configure($schema);
     }
 
+    protected static ?string $slug = "fine-verifications";
+    protected static ?int $navigationSort = 2;
     protected static string|UnitEnum|null $navigationGroup = "Aktivitas Peminjaman";
     protected static ?string $navigationLabel = "Verifikasi Denda";
 

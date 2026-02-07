@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Filament\Resources\PeminjamanBarangSuperAdmins\Pages;
+namespace App\Filament\Resources\PeminjamanBarangAdmin\Pages;
 
 use App\Enums\StatusPeminjaman;
-use App\Filament\Resources\PeminjamanBarangSuperAdmins\PeminjamanBarangSuperAdminResource;
+use App\Filament\Resources\PeminjamanBarangAdmin\PeminjamanBarangAdminResource;
 use App\Models\User;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Auth;
 
-class CreatePeminjamanBarangSuperAdmin extends CreateRecord
+class CreatePeminjamanBarangAdmin extends CreateRecord
 {
-    protected static string $resource = PeminjamanBarangSuperAdminResource::class;
+    protected static string $resource = PeminjamanBarangAdminResource::class;
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {

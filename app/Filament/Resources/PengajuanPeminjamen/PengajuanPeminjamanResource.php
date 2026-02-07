@@ -31,7 +31,10 @@ class PengajuanPeminjamanResource extends Resource
     {
         return Auth::user()?->role == HakAkses::ADMIN;
     }
+
+    protected static ?int $navigationSort = 1;
     protected static string|BackedEnum|null $navigationIcon = LucideIcon::ClipboardClock;
+    protected static ?string $slug= "loan-requests";
     protected static string|UnitEnum|null $navigationGroup = "Aktivitas Peminjaman";
     protected static ?string $navigationLabel = "Pengajuan Peminjaman";
     public static function getBreadcrumb(): string

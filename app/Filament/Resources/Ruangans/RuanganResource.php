@@ -24,6 +24,7 @@ class RuanganResource extends Resource
     //Untuk Ganti Icon
     protected static string|BackedEnum|null $navigationIcon = LucideIcon::Building2;
     protected static ?string $navigationLabel = "Ruangan";
+    protected static ?string $slug = "rooms";
     protected static ?string $breadcrumb = "Ruangan";
     protected static ?string $recordTitleAttribute = 'name';
     protected static string|UnitEnum|null $navigationGroup = "Inventaris";

@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\PeminjamanBarangSuperAdmins\Tables;
+namespace App\Filament\Resources\PeminjamanBarangAdmin\Tables;
 
 use App\Enums\StatusPeminjaman;
 
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
-class PeminjamanBarangSuperAdminsTable
+class PeminjamanBarangAdminTable
 {
     public static function configure(Table $table): Table
     {

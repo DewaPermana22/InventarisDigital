@@ -1,63 +1,59 @@
 <?php
 
-namespace App\Filament\Resources\PeminjamanBarangSuperAdmins;
+namespace App\Filament\Resources\PeminjamanBarangAdmin;
 
 use App\Enums\HakAkses;
 use App\Enums\StatusPeminjaman;
-use App\Filament\Resources\PeminjamanBarangSuperAdmins\Pages\CreatePeminjamanBarangSuperAdmin;
-use App\Filament\Resources\PeminjamanBarangSuperAdmins\Pages\EditPeminjamanBarangSuperAdmin;
-use App\Filament\Resources\PeminjamanBarangSuperAdmins\Pages\ListPeminjamanBarangSuperAdmins;
-use App\Filament\Resources\PeminjamanBarangSuperAdmins\Schemas\PeminjamanBarangSuperAdminForm;
-use App\Filament\Resources\PeminjamanBarangSuperAdmins\Tables\PeminjamanBarangSuperAdminsTable;
+use App\Filament\Resources\PeminjamanBarangAdmin\Pages\CreatePeminjamanBarangAdmin;
+use App\Filament\Resources\PeminjamanBarangAdmin\Pages\ListPeminjamanBarangAdmin;
+use App\Filament\Resources\PeminjamanBarangAdmin\Schemas\PeminjamanBarangAdminForm;
+use App\Filament\Resources\PeminjamanBarangAdmin\Tables\PeminjamanBarangAdminTable;
 use App\Models\PeminjamanBarang;
-use App\Models\PeminjamanBarangSuperAdmin;
 use BackedEnum;
 use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
-class PeminjamanBarangSuperAdminResource extends Resource
+class PeminjamanBarangAdminResource extends Resource
 {
     protected static ?string $model = PeminjamanBarang::class;
 
    protected static string|BackedEnum|null $navigationIcon = LucideIcon::PackagePlus;
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 0;
    public static function canViewAny(): bool
     {
-        return Auth::user()?->role == HakAkses::SUPERADMIN;
+        return Auth::user()?->role == HakAkses::ADMIN;
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('status', StatusPeminjaman::DIPINJAM)
-        ->where('petugas_id', Auth::id());
+        return parent::getEloquentQuery()->where('status', StatusPeminjaman::DIPINJAM);
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->role == HakAkses::SUPERADMIN;
+        return Auth::user()?->role == HakAkses::ADMIN;
     }
 
     protected static ?string $navigationLabel = "Peminjaman Barang";
-
-    protected static string|UnitEnum|null $navigationGroup = "Peminjaman";
+    protected static ?string $slug = "loan-management";
+    protected static string|UnitEnum|null $navigationGroup = "Aktivitas Peminjaman";
 
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Schema $schema): Schema
     {
-        return PeminjamanBarangSuperAdminForm::configure($schema);
+        return PeminjamanBarangAdminForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return PeminjamanBarangSuperAdminsTable::configure($table);
+        return PeminjamanBarangAdminTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -70,8 +66,8 @@ class PeminjamanBarangSuperAdminResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListPeminjamanBarangSuperAdmins::route('/'),
-            'create' => CreatePeminjamanBarangSuperAdmin::route('/create'),
+            'index' => ListPeminjamanBarangAdmin::route('/'),
+            'create' => CreatePeminjamanBarangAdmin::route('/create'),
         ];
     }
 

@@ -76,6 +76,7 @@ class ListUsers extends ListRecords
                         ->actions([
                             Action::make('view')
                                 ->button()
+                                ->color(Color::Indigo)
                                 ->label('Download Lagi')
                                 ->url(route('export.users', ['role' => $role]))
                                 ->openUrlInNewTab(),
