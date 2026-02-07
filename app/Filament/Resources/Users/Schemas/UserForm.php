@@ -10,6 +10,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Placeholder;
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\ViewRecord;
 
 class UserForm
 {
@@ -18,7 +21,22 @@ class UserForm
         return $schema
             ->components([
                 Section::make('Informasi Pengguna')
-                    ->description('Lengkapi data di bawah ini untuk menambahkan akun pengguna baru')
+                    ->description(function ($livewire) {
+                        if ($livewire instanceof CreateRecord) {
+                            return 'Lengkapi data di bawah ini untuk menambahkan akun pengguna baru.';
+                        }
+
+                        if ($livewire instanceof EditRecord) {
+                            return 'Perbarui data akun pengguna yang sudah terdaftar.';
+                        }
+
+                        if ($livewire instanceof ViewRecord) {
+                            return 'Berikut adalah detail informasi akun pengguna.';
+                        }
+
+                        return null;
+                    })
+
                     ->components([
                         TextInput::make('name')
                             ->label('Nama Lengkap')

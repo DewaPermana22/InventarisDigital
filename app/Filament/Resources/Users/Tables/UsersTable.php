@@ -47,6 +47,20 @@ class UsersTable
                     ->weight('bold')
                     ->sortable(),
 
+                TextColumn::make('phone_number')
+                    ->label('Nomor Telepon')
+                    ->searchable()
+                    ->copyable()
+                    ->formatStateUsing(
+                        fn($state) => $state
+                            ? Str::limit($state, 20)
+                            : '-'
+                    )
+                    ->tooltip(fn($state) => $state ?: '-')
+                    ->copyMessage('Nomor telepon disalin!')
+                    ->weight('bold')
+                    ->sortable(),
+
                 TextColumn::make('role')
                     ->label('Hak Akses')
                     ->badge()
@@ -82,7 +96,10 @@ class UsersTable
             ->recordActions([
                 ActionGroup::make([
                     EditAction::make()->color('warning'),
-                    ViewAction::make()->color(Color::Indigo),
+                    ViewAction::make()->color(Color::Indigo)
+                    ->modalHeading('Detail Pengguna')
+                    ->modalDescription('Berikut adalah detail informasi akun pengguna.')
+                    ->modalIcon(LucideIcon::CircleUserRound),
                 ])
             ])
             ->toolbarActions([

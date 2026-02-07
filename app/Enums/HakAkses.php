@@ -13,9 +13,9 @@ enum HakAkses: string
     public function label()
     {
         return match ($this) {
-            self::SUPERADMIN => 'Superadmin',
-            self::ADMIN => 'Admin',
-            self::USER => 'User'
+            self::SUPERADMIN => 'Admin',
+            self::ADMIN => 'Petugas',
+            self::USER => 'Peminjam'
         };
     }
 }
