@@ -6,8 +6,8 @@
     <title>Kartu Peminjam - InventarisDigital</title>
     <style>
         @page {
-            size: A4 portrait;
-            margin: 0;
+            size: A4 landscape;
+            margin: 5mm;
         }
 
         * {
@@ -156,7 +156,6 @@
             padding: 4px 10px;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            font-family: 'Courier New', monospace;
             font-size: 9px;
             font-weight: 600;
             color: #475569;
@@ -241,10 +240,6 @@
                                     <td>
                                         <div class="card-label">Identity Card</div>
                                         <img src="{{ public_path('logo/inventarisdg_light.png') }}" style="height: 24px; width: auto; display: block;">
-                                        <!-- <div class="logo-text">InventarisDigital</div> -->
-                                    </td>
-                                    <td class="logo-cell">
-                                        <!-- <img src="{{ public_path('logo/logo_icon.png') }}" style="height: 24px; width: auto; display: block;"> -->
                                     </td>
                                 </tr>
                             </table>
@@ -254,6 +249,7 @@
                         <div class="user-info">
                             <div class="user-name">{{ strtoupper($user->name) }}</div>
                             <div class="user-detail">{{ $user->email }}</div>
+                            <div class="user-detail">{{ $user->phone_number }}</div>
 
                             <div class="status-label">Status</div>
                             <div class="status-value">

@@ -51,8 +51,12 @@ class ListDataPengembalians extends ListRecords
 
         try {
             DB::transaction(function () use ($peminjaman) {
+                $status = now()->gt($peminjaman->tanggal_kembali)
+                    ? StatusPeminjaman::TERLAMBAT
+                    : StatusPeminjaman::DIKEMBALIKAN;
+
                 $peminjaman->update([
-                    'status' => StatusPeminjaman::DIKEMBALIKAN,
+                    'status' => $status,
                     'updated_by' => Auth::id(),
                 ]);
 
@@ -85,7 +89,7 @@ class ListDataPengembalians extends ListRecords
                     $hariTelat = now()->diffInDays($peminjaman->tanggal_kembali);
 
                     $peminjaman->update([
-                        'status' => StatusPeminjaman::TERLAMBAT,
+                        'status' => $status,
                         'updated_by' => Auth::id(),
                     ]);
 
@@ -140,7 +144,7 @@ class ListDataPengembalians extends ListRecords
     {
         return [
             Action::make('kembalikan_peminjaman')
-                ->icon(Heroicon::Camera)
+                ->icon(Heroicon::QrCode)
                 ->label('Pengembalian')
                 ->color('success')
                 ->modalIcon(Lucideicon::ScanBarcode)

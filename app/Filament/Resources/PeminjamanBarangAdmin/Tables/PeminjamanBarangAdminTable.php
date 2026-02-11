@@ -57,6 +57,6 @@ class PeminjamanBarangAdminTable
                     ->searchable(),
             ])
             ->defaultSort('created_at', 'desc')
-            ->striped();;
+            ->striped();
     }
 }

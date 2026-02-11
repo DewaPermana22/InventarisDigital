@@ -2,7 +2,7 @@
     <style>
         @media print {
             body {
-                margin: 0;
+                margin: 5mm;
             }
 
             .barcode-grid {
@@ -33,7 +33,7 @@
         }
 
         .barcode-code {
-            font-family: 'Courier New', monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             font-size: 14px;
             font-weight: 600;
             margin: 8px 0 4px 0;

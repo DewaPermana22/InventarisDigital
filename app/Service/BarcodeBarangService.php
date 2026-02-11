@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Models\Barang;
 use Milon\Barcode\DNS2D;
-use Illuminate\Support\Facades\Storage;
 
 class BarcodeBarangService
 {

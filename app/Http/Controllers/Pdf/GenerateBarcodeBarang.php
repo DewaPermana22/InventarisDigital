@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Pdf;
 
 use App\Http\Controllers\Controller;
 use App\Service\BarcodeBarangService;
-use Barryvdh\Snappy\Facades\SnappyPdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class GenerateBarcodeBarang extends Controller
@@ -18,7 +18,7 @@ class GenerateBarcodeBarang extends Controller
 
         $data = app(BarcodeBarangService::class)->generateBarcodeForPrint($ids);
 
-        return SnappyPdf::loadView(
+        return Pdf::loadView(
             'pdf.barcode-barang',
             [
                 'barcodes' => $data['barcodes'],
@@ -26,13 +26,6 @@ class GenerateBarcodeBarang extends Controller
             ]
         )
             ->setPaper('a4', 'portrait')
-            ->setOption('margin-top', 5)
-            ->setOption('margin-bottom', 5)
-            ->setOption('margin-left', 5)
-            ->setOption('margin-right', 5)
-            ->setOption('enable-local-file-access', true)
-            ->setOption('print-media-type', true)
-            ->setOption('no-background', false)
             ->download('barcode-barang-' . now()->format('Ymd_His') . '.pdf');
     }
 }

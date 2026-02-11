@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>@yield('title', 'InventarisDigital') | Solusi Manajemen Inventaris Modern</title>
+    <meta name="google-site-verification" content="m_favPoAxMrtS9u5TOcfxZY-ChEj9Y_LJpZJSwywoes" />
     <meta name="description" content="@yield('meta_description', 'Kelola stok, aset, dan inventaris bisnis Anda secara real-time dengan InventarisDigital. Mudah, cepat, dan efisien.')">
     <meta name="keywords" content="manajemen inventaris, aplikasi stok barang, inventaris digital, kelola aset perusahaan">
     <meta name="author" content="InventarisDigital">

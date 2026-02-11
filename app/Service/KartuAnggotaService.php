@@ -11,7 +11,7 @@ class KartuAnggotaService
 
     public function cetakKartu(array $ids): array
     {
-        $users = User::select('id', 'name', 'email', 'profile_pict')
+        $users = User::select('id', 'name', 'email', 'phone_number')
             ->where('role', 'user')
             ->whereIn('id', $ids)
             ->get();
@@ -25,22 +25,9 @@ class KartuAnggotaService
 
             // Generate barcode
             $user->barcode = $barcode->getBarcodePNG(
-                $user->kode,
+                strval($user->id),
                 'QRCODE'
             );
-
-            // Process photo
-            $photoPath = $user->profile_pict
-                ? public_path('storage/' . $user->profile_pict)
-                : null;
-
-            if ($photoPath && file_exists($photoPath)) {
-                $user->photo_base64 = base64_encode(file_get_contents($photoPath));
-            } else {
-                $user->photo_base64 = base64_encode(
-                    file_get_contents(public_path('storage/profile_pict/default_pp.jpg'))
-                );
-            }
         }
 
         // Load logo
