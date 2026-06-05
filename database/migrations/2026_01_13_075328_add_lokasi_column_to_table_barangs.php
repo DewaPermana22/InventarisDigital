@@ -12,17 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('barangs', function (Blueprint $table) {
-            $table->foreign('room_id')
-                ->references('id')
-                ->on('ruangans')
+            $table->foreignId('room_id')
+                ->after('id')
+                ->nullable()
+                ->constrained('ruangans')
                 ->cascadeOnDelete();
         }); 
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('barangs', function (Blueprint $table) {
             $table->dropForeign(['room_id']);
+            $table->dropColumn('room_id');
         });
     }
 };
