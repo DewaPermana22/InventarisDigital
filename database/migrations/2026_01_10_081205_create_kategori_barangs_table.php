@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('kategori_barangs', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('prefix');
+            $table->string('prefix')->nullable()->unique();
             $table->timestamps();
             $table->softDeletes();
         });
